@@ -47,26 +47,14 @@ public class UserResource {
 
     @GET
 //    @RolesAllowed({"admin", "user"})
-    @Path("name/{name}")
-    public Response getByName(@PathParam("name")String name) {
-        return userRepository.find("namee", name)
+    @Path("name/{firstname}")
+    public Response getByName(@PathParam("firstname")String name) {
+        return userRepository.find("firstname", name)
                 .singleResultOptional()
                 .map(user -> Response.ok(user).build())
                 .orElse(Response.status(NOT_FOUND).build());
     }
 
-    @Path("{id}")
-//    @RolesAllowed("admin")
-    @DELETE
-    public Response deleteUsers(@PathParam("id")Long id) {
-        users.stream()
-                .filter(user ->
-                        user.getId().equals(id))
-                .findFirst()
-                .ifPresent(user ->
-                        users.remove(user));
-        return Response.noContent().build();
-    }
 
     @GET
     @Path("username/{username}")
@@ -87,6 +75,7 @@ public class UserResource {
 
     @DELETE
     @Path("{id}")
+    @Transactional
     public Response deleteById(@PathParam("id")Long id) {
         boolean deleted = userRepository.deleteById(id);
         return deleted ? Response.noContent().build() :
