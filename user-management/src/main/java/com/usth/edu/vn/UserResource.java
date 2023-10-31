@@ -10,7 +10,6 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import java.beans.Transient;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +29,7 @@ public class UserResource {
     List<Users> users = new ArrayList<>();
 
     @GET
-//    @PermitAll
+    @PermitAll
     public Response getAllUsers() {
         List<Users> users = userRepository.listAll();
         return Response.ok(users).build();
@@ -38,6 +37,7 @@ public class UserResource {
 
     @GET
     @Path("{id}")
+    @RolesAllowed({"admin", "user"})
     public Response getUserById(@PathParam("id")Long id){
         return userRepository.findByIdOptional(id)
                 .map(user -> Response.ok(user).build())
@@ -46,7 +46,7 @@ public class UserResource {
 
 
     @GET
-//    @RolesAllowed({"admin", "user"})
+    @RolesAllowed({"admin", "user"})
     @Path("name/{firstname}")
     public Response getByName(@PathParam("firstname")String name) {
         return userRepository.find("firstname", name)
@@ -57,13 +57,20 @@ public class UserResource {
 
 
     @GET
+    @RolesAllowed({"admin", "user"})
     @Path("username/{username}")
     public Response getByUsername(@PathParam("username")String username) {
         List<Users> users = userRepository.findByUsername(username);
-        return Response.ok(users).build();
+//        return Response.ok(users).build();
+      if (users.isEmpty()) {
+          return Response.status(BAD_REQUEST).build();
+      } else {
+          return Response.ok(users).build();
+      }
     }
 
     @POST
+    @RolesAllowed({"admin", "user"})
     @Transactional
     public Response createUser(Users user) {
         userRepository.persist(user);
@@ -74,6 +81,7 @@ public class UserResource {
     }
 
     @DELETE
+    @RolesAllowed({"admin", "user"})
     @Path("{id}")
     @Transactional
     public Response deleteById(@PathParam("id")Long id) {
