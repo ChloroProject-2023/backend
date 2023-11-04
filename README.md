@@ -1,68 +1,64 @@
-# dashboard
+# dashboard (test service)
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Web application for porject
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+- BI12-074 Đoàn Đình Đăng
+- BI12-076 Mai Hải Đăng
+- BI12-073 Trần Hải Đăng
 
-## Running the application in dev mode
+# Normal build and run
 
-You can run your application in dev mode that enables live coding using:
+## Requirement
 
-```shell script
-./mvnw compile quarkus:dev
-```
+- JAVA_HOME set up (recommended jdk 17)
+- Maven set up, (MAVEN_HOME set up for downloading extension)
+- Docker set up (future update)
+- Mysql running on port 3306 with created schema *user-management* for storing data
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
-
-## Packaging and running the application
-
-The application can be packaged using:
-
-```shell script
-./mvnw package
-```
-
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
+## Quick run (Require docker for building images)
 
 ```shell script
-./mvnw package -Dquarkus.package.type=uber-jar
+./quickstart.sh
 ```
+(Still updating and fixing)
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+## Normal build
 
-## Creating a native executable
-
-You can create a native executable using:
+- Generate RSA key used for security of the project(for window: open git bash terminal or run in WSL bash terminal)
 
 ```shell script
-./mvnw package -Dnative
+./keygen.sh
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+- run *authentication-jwt* service to get *JWT*
 
 ```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
+cd authentication-jwt
+mvn compile quarkus:dev
 ```
 
-You can then execute your native executable with: `./target/dashboard-1.0-SNAPSHOT-runner`
+- create new shell and run *user-management* for testing endpoint
 
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
+```shell script
+cd user-management
+mvn compile quarkus:dev
+```
 
-## Related Guides
+# Accessing API
 
-- RESTEasy Reactive ([guide](https://quarkus.io/guides/resteasy-reactive)): A Jakarta REST implementation utilizing
-  build time processing and Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the
-  extensions that depend on it.
+- Test on **Postman** for convenient UI
+- Test on **swagger-ui** at endpoint */q/swagger-ui*
 
-## Provided Code
+## *authentication-jwt* is running on port 8082
 
-### RESTEasy Reactive
+- open URL method GET:*localhost:8082/jwt* and get the *JWT*
 
-Easily start your Reactive RESTful Web Services
+## *user-management* is running on port 8081
 
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+- Available endpoint:
+  - GET: *localhost:8081/api/list* : list data (unsecured)
+  - POST: *localhost:8081/api/list*: create data (input body follows the JSON script - Read Users.java to see the input attributes) (secured)
+  - GET: *localhost:8081/api/list/{id}*: get user by id (secured)
+  - GET: *localhost:8081/api/list/{firstname}*: get user by first name (secured)
+  - GET: *localhost:8081/api/list/{username}*: get user by username (secured)
+  - DELETE: *localhost:8081/api/list/{id}*: delete user by id (secured)
