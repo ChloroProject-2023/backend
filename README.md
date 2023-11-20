@@ -2,9 +2,9 @@
 
 Web application for porject
 
-- BI12-074 Đoàn Đình Đăng
-- BI12-076 Mai Hải Đăng
-- BI12-073 Trần Hải Đăng
+- BI12-074 Đoàn Đình Đăng (Backend)
+- BI12-076 Mai Hải Đăng (Frontend API Handling)
+- BI12-073 Trần Hải Đăng (Frontend UI)
 
 # Normal build and run
 
@@ -30,35 +30,111 @@ Web application for porject
 ./keygen.sh
 ```
 
-- run *authentication-jwt* service to get *JWT*
+- run *dashboard-security* service to get *JWT* (Running on port 8080)
 
 ```shell script
-cd authentication-jwt
+cd dashboard-security
 mvn compile quarkus:dev
 ```
 
-- create new shell and run *user-management* for testing endpoint
+- create new shell and run *dashboard-user* for testing endpoint (Running on port 8081)
 
 ```shell script
-cd user-management
+cd dashboard-security
 mvn compile quarkus:dev
 ```
 
 # Accessing API
 
 - Test on **Postman** for convenient UI
-- Test on **swagger-ui** at endpoint */q/swagger-ui*
+- Test on **swagger-ui** at endpoint **/q/swagger-ui**
+    - for *dashboard-security*: > http://localhost:8080/q/swagger-ui
+    - for *dashboard-user*: http://localhost:8081/q/swagger-ui
 
-## *authentication-jwt* is running on port 8082
+## Register new user
 
-- open URL method GET:*localhost:8082/jwt* and get the *JWT*
+- Method: **POST**: (Permission: All)
 
-## *user-management* is running on port 8081
+```url
+http://localhost:8080/users
+```
 
-- Available endpoint:
-  - GET: *localhost:8081/api/list* : list data (unsecured)
-  - POST: *localhost:8081/api/list*: create data (input body follows the JSON script - Read Users.java to see the input attributes) (secured)
-  - GET: *localhost:8081/api/list/{id}*: get user by id (secured)
-  - GET: *localhost:8081/api/list/{firstname}*: get user by first name (secured)
-  - GET: *localhost:8081/api/list/{username}*: get user by username (secured)
-  - DELETE: *localhost:8081/api/list/{id}*: delete user by id (secured)
+- Request Body:
+
+```json
+{
+    "username": "username",
+    "password": "@Password123", // password must be at least 8 characters, contain at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character
+    "userDetails" : {
+        "firstname": "firstname",
+        "lastname": "lastname",
+        "email": "email@gmail.com",
+    }
+}
+```
+
+- Future update:
+
+    - verify 2 time entered password (maybe done in Frontend)
+    - verify account with google, facebook, github, etc...
+
+## Login to get jwt
+
+- Method: **GET** (Permission: **admin**, **user**)
+
+```url
+http://localhost:8080/jwt
+```
+
+- This endpoint will return a jwt token for accessing other endpoint
+
+## Get user information
+
+- Method: **GET** (Permission: **admin**, **user**)
+    
+    Get list of user information
+
+```url
+http://localhost:8081/users
+```
+
+- Method: **GET** (Permission: **admin**, **user**)
+    
+    Get a page of 20 users
+
+```url
+http://localhost:8081/users/paging/{pageNo}
+```
+
+- Method **GET** (Permission: **admin**, **user**)
+    
+    Search for user started with specific string
+
+```url
+http://localhost:8081/users/search/{startsWith}
+```
+
+- Method **Post** (Permission: **admin**, **user**)
+    
+    Update user information (Still fixing)
+
+## Response body
+
+```json
+[
+    {
+        "id": {id},
+        "firstname": "firstname",
+        "lastname": "lastname",
+        "email": "email@gmail.com",
+        "createTime": "{time}",
+        "users": {
+            "id": {id},
+            "username": "username",
+            "password": "{hashed password}",
+            "roles": "user",
+            "userDetails": {id}
+        }
+    }
+]
+```
