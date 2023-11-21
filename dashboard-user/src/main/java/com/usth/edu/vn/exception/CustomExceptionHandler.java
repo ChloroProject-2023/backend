@@ -8,7 +8,7 @@ import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
 import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
 
 @Provider
-public class ExceptionHandler implements ExceptionMapper<CustomException> {
+public class CustomExceptionHandler implements ExceptionMapper<CustomException> {
 
     @Override
     public Response toResponse(CustomException e) {
@@ -22,7 +22,7 @@ public class ExceptionHandler implements ExceptionMapper<CustomException> {
                     .build();
         } else {
             return Response.status(BAD_REQUEST)
-                    .entity("What the fuck is this exception ?")
+                    .entity("What is this exception ???")
                     .build();
         }
     }
