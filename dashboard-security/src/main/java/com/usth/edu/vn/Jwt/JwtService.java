@@ -13,6 +13,7 @@ public class JwtService  {
                 .subject(subject)
                 .groups(roles)
                 .expiresAt(System.currentTimeMillis() + 3600)
-                .sign();
+                .innerSign() // default Signature algorithm: RS256
+                .encrypt(); // default Key encryption algorithm: RSA-OAEP-256
     }
 }
