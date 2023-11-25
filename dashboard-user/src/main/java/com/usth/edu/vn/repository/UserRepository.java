@@ -56,4 +56,14 @@ public class UserRepository implements PanacheRepository<Users> {
             // implement update user ...
         }
     }
+    
+    public void deleteUser(String username) throws CustomException {
+        if (findByUsername(username).isEmpty()) {
+            throw new CustomException(USER_NOT_FOUND);
+        } else {
+            Users user = findByUsername(username).get();
+            userDetailsRepository.deleteById(user.getUserDetails().getId());
+            deleteById(user.getId());
+        }
+    }
 }

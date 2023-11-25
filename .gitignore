@@ -34,3 +34,9 @@ google-services.json
 
 target/
 jwt
+
+# nvim jdtls
+.classpath
+.factorypath
+.project
+.settings/

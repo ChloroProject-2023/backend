@@ -18,7 +18,9 @@ import org.jboss.resteasy.reactive.RestQuery;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
+import static com.usth.edu.vn.exception.ExceptionType.USER_NOT_FOUND;
 import static jakarta.ws.rs.core.Response.Status.*;
 
 @Path("/")
@@ -71,6 +73,18 @@ public class UserResource extends PanacheEntityBase {
         return Response.ok(anyUsers).build();
     }
 
+    @GET
+    @Path("users/profile")
+    @RolesAllowed({"admin", "user"})
+    public Response getProfile (@QueryParam("username") String username) throws CustomException{
+        Optional<Users> user = userRepository.findByUsername(username);
+        if (user.isEmpty()) {
+            throw new CustomException(USER_NOT_FOUND);
+        } else {
+            return Response.ok(user.get()).build();
+        }
+    }
+
     @POST
     @Path("users")
     @PermitAll
@@ -87,12 +101,20 @@ public class UserResource extends PanacheEntityBase {
     @Path("users/update")
     @Transactional
     @RolesAllowed({"admin", "user"})
-    public Response updateUser(@RestQuery String username, Users user) throws CustomException {
+    public Response updateUser(@QueryParam("username") String username, Users user) throws CustomException {
         userRepository.updateUser(username, user);
         if (userRepository.isPersistent(user)) {
             return Response.created(URI.create("/update-user/" + user.getId())).build();
         }
         return Response.status(BAD_REQUEST).entity("Blehh notthing is updated !!! HAHA (Still fixing)").build();
     }
-
+    
+    @DELETE
+    @Path("users/delete")
+    @Transactional
+    @RolesAllowed({"admin", "user"})
+    public Response deleteUser(@QueryParam("username") String username) throws CustomException {
+        userRepository.deleteUser(username);
+        return Response.ok("User " + username +" is deleted!").build();
+    }
 }
