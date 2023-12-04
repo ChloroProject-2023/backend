@@ -2,6 +2,8 @@ package com.usth.edu.vn.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.usth.edu.vn.validation.ValidEmail;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -32,7 +34,7 @@ public class UserDetails {
     @NotBlank(message = "Last name may not be blank!")
     private String lastname;
 
-    @NotBlank(message = "Email may not be blank!")
+    @ValidEmail
     private String email;
 
     @Temporal(TIMESTAMP)
