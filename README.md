@@ -89,7 +89,7 @@ http://localhost:8080/jwt
 
 - This endpoint will return a jwt token for accessing other endpoint
 
-## Get user information
+## User information
 
 - Method: **GET** (Permission: **admin**, **user**)
   Get list of user information
@@ -113,7 +113,10 @@ http://localhost:8081/users/search/{startsWith}
 ```
 
 - Method **Post** (Permission: **admin**, **user**)
-  Update user information (Still fixing)
+  Update user information
+  ```
+  http://localhost:8081/users/update/username={username}&password={password}
+  ```
 
 ## Response body
 

@@ -1,5 +1,7 @@
 package com.usth.edu.vn.model;
 
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.usth.edu.vn.validation.ValidPassword;
@@ -45,6 +47,18 @@ public class Users {
 
     @OneToOne(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
     private UserDetails userDetails;
+
+    @OneToMany(mappedBy = "users")
+    private Set<Models> models;
+
+    @OneToMany(mappedBy = "users")
+    private Set<Resources> resources;
+
+    @OneToMany(mappedBy = "users")
+    private Set<Inferences> inferences;
+
+    @OneToMany(mappedBy = "users")
+    private Set<Ratings> ratings;
 
     public void setPassword(String password) {
         this.password = BcryptUtil.bcryptHash(password);
