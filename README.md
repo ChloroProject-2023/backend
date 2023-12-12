@@ -112,8 +112,11 @@ http://localhost:8081/users/paging/{pageNo}
 http://localhost:8081/users/search/{startsWith}
 ```
 
-- Method **Post** (Permission: **admin**, **user**)
-  Update user information (Still fixing)
+- Method **Post** (Permission: **admin**, **user**) Update user information
+
+```
+http://localhost:8081/users/update/username={username}&password={password}
+```
 
 ## Response body
 
