@@ -14,7 +14,6 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.jboss.resteasy.reactive.RestQuery;
 
 import java.net.URI;
 import java.util.List;
@@ -101,12 +100,9 @@ public class UserResource extends PanacheEntityBase {
     @Path("users/update")
     @Transactional
     @RolesAllowed({"admin", "user"})
-    public Response updateUser(@QueryParam("username") String username, Users user) throws CustomException {
-        userRepository.updateUser(username, user);
-        if (userRepository.isPersistent(user)) {
-            return Response.created(URI.create("/update-user/" + user.getId())).build();
-        }
-        return Response.status(BAD_REQUEST).entity("Blehh notthing is updated !!! HAHA (Still fixing)").build();
+    public Response updateUser(@QueryParam("username") String username, @QueryParam("password") String password, Users user) throws CustomException {
+        userRepository.updateUser(username, password, user);
+        return Response.created(URI.create("/update-user/" + user.getId())).build();
     }
     
     @DELETE
