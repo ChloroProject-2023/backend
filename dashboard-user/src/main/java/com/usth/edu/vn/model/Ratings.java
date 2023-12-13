@@ -22,7 +22,7 @@ public class Ratings {
   private String comment;
 
   @ManyToOne
-  @JoinColumn(name = "rating_id", referencedColumnName = "id")
+  @JoinColumn(name = "user_id", referencedColumnName = "id")
   private Users users;
 
   @ManyToOne

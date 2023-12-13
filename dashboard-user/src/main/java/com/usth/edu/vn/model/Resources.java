@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "resources", schema = "models_management")
+@Table(name = "resources", schema = "user_management")
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id"
@@ -32,7 +32,7 @@ public class Resources {
   private Date createTime;
 
   @ManyToOne
-  @JoinColumn(name = "resources_id", referencedColumnName = "id")
+  @JoinColumn(name = "user_id", referencedColumnName = "id")
   private Users users;
 
   @OneToOne(mappedBy = "resources", cascade = CascadeType.ALL, orphanRemoval = true)

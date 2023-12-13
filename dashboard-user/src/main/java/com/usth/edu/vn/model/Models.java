@@ -3,6 +3,7 @@ package com.usth.edu.vn.model;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
 
 import java.util.Date;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "models", schema = "models_management")
+@Table(name = "models", schema = "user_management")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Models {
 
@@ -37,12 +38,12 @@ public class Models {
   private Date createTime;
 
   @ManyToOne
-  @JoinColumn(name = "model_id", referencedColumnName = "id")
+  @JoinColumn(name = "user_id", referencedColumnName = "id")
   private Users users;
 
   @OneToOne(mappedBy = "models", cascade = CascadeType.ALL, orphanRemoval = true)
   private Inferences inferences;
 
   @OneToMany(mappedBy = "models")
-  private Ratings ratings;
+  private Set<Ratings> ratings;
 }
