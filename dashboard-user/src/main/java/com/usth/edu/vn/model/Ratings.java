@@ -1,5 +1,9 @@
 package com.usth.edu.vn.model;
 
+import static jakarta.persistence.TemporalType.TIMESTAMP;
+
+import java.util.Date;
+
 import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -20,6 +24,9 @@ public class Ratings {
   private Integer stars;
 
   private String comment;
+
+  @Temporal(TIMESTAMP)
+  private Date createTime;
 
   @ManyToOne
   @JoinColumn(name = "user_id", referencedColumnName = "id")

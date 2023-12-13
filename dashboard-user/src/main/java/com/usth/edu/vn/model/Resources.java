@@ -15,10 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "resources", schema = "user_management")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id"
-)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Resources {
 
   @Id
@@ -35,6 +32,6 @@ public class Resources {
   @JoinColumn(name = "user_id", referencedColumnName = "id")
   private Users users;
 
-  @OneToOne(mappedBy = "resources", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToOne(mappedBy = "resources", cascade = CascadeType.PERSIST)
   private Inferences inferences;
 }

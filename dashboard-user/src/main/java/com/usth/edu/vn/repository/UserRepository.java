@@ -51,6 +51,7 @@ public class UserRepository implements PanacheRepository<Users> {
         }
     }
 
+    //todo: optimize update function
     public void updateUser(String username, String password, Users user) throws CustomException {
         if (findByUsername(username).isEmpty()) {
             throw new CustomException(USER_NOT_FOUND);
@@ -63,6 +64,7 @@ public class UserRepository implements PanacheRepository<Users> {
                 }
                 else {
                     throw new CustomException(INCORRECT_PASSWORD);
+                }
             }
             if (user.getRoles() != null) {
                 oldUser.setRoles(user.getRoles());
@@ -82,16 +84,13 @@ public class UserRepository implements PanacheRepository<Users> {
             persist(oldUser);
             userDetailsRepository.persist(userDetails);
         }
-      }
     }
     
     public void deleteUser(String username) throws CustomException {
         if (findByUsername(username).isEmpty()) {
             throw new CustomException(USER_NOT_FOUND);
         } else {
-            Users user = findByUsername(username).get();
-            userDetailsRepository.deleteById(user.getUserDetails().getId());
-            deleteById(user.getId());
+            delete(findByUsername(username).get());
         }
     }
 }
