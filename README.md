@@ -1,4 +1,4 @@
-# dashboard (test service)
+# dashboard
 
 Web application for porject
 
@@ -13,13 +13,14 @@ Web application for porject
 - JAVA_HOME set up (recommended jdk 17)
 - Maven set up, (MAVEN_HOME set up for downloading extension)
 - Docker set up (future update)
-- Mysql running on port 3306 with created schema *user-management* for storing data
+- Mysql running on port 3306 with created schema _user-management_ for storing data
 
 ## Quick run (Require docker for building images)
 
 ```shell script
 ./quickstart.sh
 ```
+
 (Still updating and fixing)
 
 ## Normal build
@@ -30,14 +31,14 @@ Web application for porject
 ./keygen.sh
 ```
 
-- run *dashboard-security* service to get *JWT* (Running on port 8080)
+- run _dashboard-security_ service to get _JWT_ (Running on port 8080)
 
 ```shell script
 cd dashboard-security
 mvn compile quarkus:dev
 ```
 
-- create new shell and run *dashboard-user* for testing endpoint (Running on port 8081)
+- create new shell and run _dashboard-user_ for testing endpoint (Running on port 8081)
 
 ```shell script
 cd dashboard-security
@@ -48,8 +49,8 @@ mvn compile quarkus:dev
 
 - Test on **Postman** for convenient UI
 - Test on **swagger-ui** at endpoint **/q/swagger-ui**
-    - for *dashboard-security*: > http://localhost:8080/q/swagger-ui
-    - for *dashboard-user*: http://localhost:8081/q/swagger-ui
+  - for _dashboard-security_: > http://localhost:8080/q/swagger-ui
+  - for _dashboard-user_: http://localhost:8081/q/swagger-ui
 
 ## Register new user
 
@@ -63,20 +64,20 @@ http://localhost:8080/users
 
 ```json
 {
-    "username": "username",
-    "password": "@Password123", // password must be at least 8 characters, contain at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character
-    "userDetails" : {
-        "firstname": "firstname",
-        "lastname": "lastname",
-        "email": "email@gmail.com",
-    }
+  "username": "username",
+  "password": "@Password123", // password must be at least 8 characters, contain at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character
+  "userDetails": {
+    "firstname": "firstname",
+    "lastname": "lastname",
+    "email": "email@gmail.com"
+  }
 }
 ```
 
 - Future update:
 
-    - verify 2 time entered password (maybe done in Frontend)
-    - verify account with google, facebook, github, etc...
+  - verify 2 time entered password (maybe done in Frontend)
+  - verify account with google, facebook, github, etc...
 
 ## Login to get jwt
 
@@ -88,35 +89,34 @@ http://localhost:8080/jwt
 
 - This endpoint will return a jwt token for accessing other endpoint
 
-## Get user information
+## User information
 
 - Method: **GET** (Permission: **admin**, **user**)
-    
-    Get list of user information
+  Get list of user information
 
 ```url
 http://localhost:8081/users
 ```
 
 - Method: **GET** (Permission: **admin**, **user**)
-    
-    Get a page of 20 users
+  Get a page of 20 users
 
 ```url
 http://localhost:8081/users/paging/{pageNo}
 ```
 
 - Method **GET** (Permission: **admin**, **user**)
-    
-    Search for user started with specific string
+  Search for user started with specific string
 
 ```url
 http://localhost:8081/users/search/{startsWith}
 ```
 
 - Method **Post** (Permission: **admin**, **user**)
-    
-    Update user information (Still fixing)
+  Update user information
+  ```
+  http://localhost:8081/users/update/username={username}&password={password}
+  ```
 
 ## Response body
 

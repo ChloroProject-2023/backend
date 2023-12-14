@@ -20,6 +20,10 @@ public class CustomExceptionHandler implements ExceptionMapper<CustomException> 
             return Response.status(BAD_REQUEST)
                     .entity("User is already existed!")
                     .build();
+        } else if (e.getMessage().equals(ExceptionType.INCORRECT_PASSWORD)){
+            return Response.status(BAD_REQUEST)
+                    .entity("Password is not matched!")
+                    .build();
         } else {
             return Response.status(BAD_REQUEST)
                     .entity("What is this exception ???")
