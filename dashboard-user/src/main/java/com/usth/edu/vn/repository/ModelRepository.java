@@ -1,6 +1,8 @@
 package com.usth.edu.vn.repository;
 
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.usth.edu.vn.model.Models;
 import com.usth.edu.vn.model.Users;
@@ -14,6 +16,8 @@ public class ModelRepository implements PanacheRepository<Models> {
 
   @Inject
   UserRepository userRepository;
+
+  private static final int PAGE_SIZE = 5;
 
   public void addModel(long user_id, Models model) {
     Users user = userRepository.findById(user_id);
@@ -41,5 +45,22 @@ public class ModelRepository implements PanacheRepository<Models> {
 
   public void deleteModel(long id) {
     deleteById(id);
+  }
+
+  public List<Models> findPagingModels(long pageNo) {
+    return streamAll()
+        .skip(pageNo * PAGE_SIZE)
+        .limit(PAGE_SIZE)
+        .toList();
+  }
+
+  public List<Models> searchModels(String keyWord) {
+    return streamAll().filter(model -> model.getName().startsWith(keyWord))
+        .collect(Collectors.toList());
+  }
+
+  public List<Models> findByUser(long user_id) {
+    Users user = userRepository.findById(user_id);
+    return user.getModels();
   }
 }

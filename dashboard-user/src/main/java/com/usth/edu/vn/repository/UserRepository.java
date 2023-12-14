@@ -9,9 +9,7 @@ import com.usth.edu.vn.model.Users$;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-
-import java.util.Date;
+import jakarta.inject.Inject; import java.util.Date;
 import java.util.Optional;
 
 import static com.usth.edu.vn.exception.ExceptionType.INCORRECT_PASSWORD;
@@ -51,7 +49,7 @@ public class UserRepository implements PanacheRepository<Users> {
         }
     }
 
-    //todo: optimize update function
+    //TODO: optimize update function
     public void updateUser(String username, String password, Users user) throws CustomException {
         if (findByUsername(username).isEmpty()) {
             throw new CustomException(USER_NOT_FOUND);

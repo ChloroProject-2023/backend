@@ -22,7 +22,7 @@ import java.util.Optional;
 import static com.usth.edu.vn.exception.ExceptionType.USER_NOT_FOUND;
 import static jakarta.ws.rs.core.Response.Status.*;
 
-@Path("/")
+@Path("/users")
 @ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -35,15 +35,6 @@ public class UserResource extends PanacheEntityBase {
     UserDetailsRepository userDetailsRepository;
 
     @GET
-    @Path("hello")
-    @RolesAllowed({"admin", "user"})
-    @Produces(MediaType.TEXT_PLAIN)
-    public String hello() {
-        return "Hello from Users";
-    }
-
-    @GET
-    @Path("users")
     @RolesAllowed({"admin", "user"})
     public Response getAllUsers() {
         List<UserDetails> allUsers = userDetailsRepository.findAllUsers();
@@ -51,7 +42,7 @@ public class UserResource extends PanacheEntityBase {
     }
 
     @GET
-    @Path("users/paging/{pageNo}")
+    @Path("/paging/{pageNo}")
     @RolesAllowed({"admin", "user"})
     public Response getAllUsers(long pageNo) {
         List<UserDetails> allUsers = userDetailsRepository.findPagingUsers(pageNo);
@@ -62,7 +53,7 @@ public class UserResource extends PanacheEntityBase {
     }
 
     @GET
-    @Path("users/search/{startsWith}")
+    @Path("/search/{startsWith}")
     @RolesAllowed({"admin", "user"})
     public Response getSearchUsers( String startsWith) {
         List<UserDetails> anyUsers = userDetailsRepository.searchUsers(startsWith);
@@ -73,7 +64,7 @@ public class UserResource extends PanacheEntityBase {
     }
 
     @GET
-    @Path("users/profile")
+    @Path("/profile")
     @RolesAllowed({"admin", "user"})
     public Response getProfile (@QueryParam("username") String username) throws CustomException{
         Optional<Users> user = userRepository.findByUsername(username);
@@ -85,7 +76,7 @@ public class UserResource extends PanacheEntityBase {
     }
 
     @POST
-    @Path("users")
+    @Path("/create")
     @PermitAll
     @Transactional
     public Response createUser(Users user) throws CustomException {
@@ -97,7 +88,7 @@ public class UserResource extends PanacheEntityBase {
     }
 
     @POST
-    @Path("users/update")
+    @Path("/update")
     @Transactional
     @RolesAllowed({"admin", "user"})
     public Response updateUser(@QueryParam("username") String username, @QueryParam("password") String password, Users user) throws CustomException {
@@ -106,7 +97,7 @@ public class UserResource extends PanacheEntityBase {
     }
     
     @DELETE
-    @Path("users/delete")
+    @Path("/delete")
     @Transactional
     @RolesAllowed({"admin", "user"})
     public Response deleteUser(@QueryParam("username") String username) throws CustomException {

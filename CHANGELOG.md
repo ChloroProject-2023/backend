@@ -19,3 +19,8 @@
 - **User service:**
   - **model:** init new models to manage entities used for storing model deep learning, user's resources, ...
   - **service:** create CUD for managing model information.
+
+## Thu, Dec, 14/2023
+
+- **User service:**
+  - **service:** add some service for requesting endpoint
