@@ -1,6 +1,8 @@
 package com.usth.edu.vn.repository;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.usth.edu.vn.model.Models;
 import com.usth.edu.vn.model.Ratings;
@@ -41,5 +43,17 @@ public class RatingRepository implements PanacheRepository<Ratings> {
 
   public void deleteRating(long id) {
     deleteById(id);
+  }
+
+  public List<Ratings> getRatingByUser(long user_id) {
+    Users user = userRepository.findById(user_id);
+    List<Ratings> ratings = new ArrayList<>(user.getRatings());
+    return ratings;
+  }
+
+  public List<Ratings> getRatignByModel(long model_id) {
+    Models models = modelRepository.findById(model_id);
+    List<Ratings> ratings = new ArrayList<>(models.getRatings());
+    return ratings;
   }
 }

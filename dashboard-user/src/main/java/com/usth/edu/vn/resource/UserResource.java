@@ -5,7 +5,6 @@ import com.usth.edu.vn.model.UserDetails;
 import com.usth.edu.vn.model.Users;
 import com.usth.edu.vn.repository.UserDetailsRepository;
 import com.usth.edu.vn.repository.UserRepository;
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -26,7 +25,7 @@ import static jakarta.ws.rs.core.Response.Status.*;
 @ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class UserResource extends PanacheEntityBase {
+public class UserResource {
 
     @Inject
     UserRepository userRepository;
