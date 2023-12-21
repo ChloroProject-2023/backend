@@ -34,9 +34,17 @@ public class UserResource {
     UserDetailsRepository userDetailsRepository;
 
     @GET
+    @Path("{id}")
+    @RolesAllowed({"admin", "user"})
+    public Response getUserById(long id) {
+      Users user = userRepository.getUserById(id);
+      return Response.ok(user).build();
+    }
+
+    @GET
     @RolesAllowed({"admin", "user"})
     public Response getAllUsers() {
-        List<UserDetails> allUsers = userDetailsRepository.findAllUsers();
+        List<Users> allUsers = userRepository.listAll();
         return Response.ok(allUsers).build();
     }
 
