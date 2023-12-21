@@ -24,7 +24,7 @@ public class RatingRepository implements PanacheRepository<Ratings> {
   public void addRating(long user_id, long model_id, Ratings rating) {
     Users user = userRepository.findById(user_id);
     Models models = modelRepository.findById(model_id);
-    rating.setUsers(user);
+    rating.setUser(user);
     rating.setModels(models);
     rating.setCreateTime(new Date());
     persist(rating);
@@ -51,7 +51,7 @@ public class RatingRepository implements PanacheRepository<Ratings> {
     return ratings;
   }
 
-  public List<Ratings> getRatignByModel(long model_id) {
+  public List<Ratings> getRatingByModel(long model_id) {
     Models models = modelRepository.findById(model_id);
     List<Ratings> ratings = new ArrayList<>(models.getRatings());
     return ratings;

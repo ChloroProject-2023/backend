@@ -27,7 +27,7 @@ public class InferenceRepository implements PanacheRepository<Inferences> {
     Users user = userRepository.findById(model_id);
     Models model = modelRepository.findById(model_id);
     Resources resource = resourceRepository.findById(resource_id);
-    inference.setUsers(user);
+    inference.setUser(user);
     inference.setModels(model);
     inference.setResources(resource);
     inference.setCreateTime(new Date());

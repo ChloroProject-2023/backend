@@ -17,7 +17,7 @@ public class ResourceRepository implements PanacheRepository<Resources> {
 
   public void addResource(long user_id, Resources resource) {
     Users user = userRepository.findById(user_id);
-    resource.setUsers(user);
+    resource.setUser(user);
     resource.setCreateTime(new Date());
     persist(resource);
   }

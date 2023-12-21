@@ -2,7 +2,6 @@ package com.usth.edu.vn.repository;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.usth.edu.vn.model.Models;
 import com.usth.edu.vn.model.Users;
@@ -19,9 +18,23 @@ public class ModelRepository implements PanacheRepository<Models> {
 
   private static final int PAGE_SIZE = 5;
 
+  public Models getModelById(long id) {
+    Models model = findById(id);
+    Models tempModel = Models
+      .builder()
+      .name(model.getName())
+      .type(model.getType())
+      .user(userRepository.getUserById(model.getUser().getId()))
+      .filepath(model.getFilepath())
+      .description(model.getDescription())
+      .createTime(model.getCreateTime())
+      .build();
+    return tempModel;
+  }
+
   public void addModel(long user_id, Models model) {
     Users user = userRepository.findById(user_id);
-    model.setUsers(user);
+    model.setUser(user);
     model.setCreateTime(new Date());
     persist(model);
   }
@@ -37,8 +50,8 @@ public class ModelRepository implements PanacheRepository<Models> {
     if (model.getFilepath() != null) {
       oldModel.setFilepath(model.getFilepath());
     }
-    if (model.getDiscription() != null) {
-      oldModel.setDiscription(model.getDiscription());
+    if (model.getDescription() != null) {
+      oldModel.setDescription(model.getDescription());
     }
     persist(oldModel);
   }
@@ -56,7 +69,7 @@ public class ModelRepository implements PanacheRepository<Models> {
 
   public List<Models> searchModels(String keyWord) {
     return streamAll().filter(model -> model.getName().startsWith(keyWord))
-        .collect(Collectors.toList());
+      .toList();
   }
 
   public List<Models> findByUser(long user_id) {
