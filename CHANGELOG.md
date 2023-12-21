@@ -5,10 +5,8 @@
 ### Feature
 
 - **JWT security:**
-
   - **service:** init signature and data encryption service.
   - **endpoint:** init endpoint for requesting JWT.
-
 - **User service:**
   - **service:** handling user information using JPA Streamer and Hibernation.
   - **endpoint:** init CUD (create, update, delete) for managing user information.
@@ -26,6 +24,20 @@
   - **service:** add some service for requesting endpoint.
 
 ## Sun, 17, Dec/2023
+
 - **User service:**
   - **service:** add service for ratings.
   - **endpoint:** add endpoint to get ratings from models.
+
+## Wed, 20, Dec/2023
+
+- **User service:**
+  - **models:** fix definitions and variables' name.
+  - **service:** fix logic code.
+
+## Thu, 21, Dec/2023
+
+- **User service:**
+  - **service:** remove JPAStream, implement project uniquely with Hibernate ORM.
+- **JWT security:**
+  - **sevice:** fix the expiration date after sign a key.
