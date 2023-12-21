@@ -11,10 +11,12 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,14 +34,14 @@ public class Models {
 
   private String filepath;
 
-  private String discription;
+  private String description;
 
   @Temporal(TIMESTAMP)
   private Date createTime;
 
   @ManyToOne
   @JoinColumn(name = "user_id", referencedColumnName = "id")
-  private Users users;
+  private Users user;
 
   @OneToOne(mappedBy = "models", cascade = CascadeType.PERSIST)
   private Inferences inferences;

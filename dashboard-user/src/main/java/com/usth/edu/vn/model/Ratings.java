@@ -34,7 +34,7 @@ public class Ratings {
 
   @ManyToOne
   @JoinColumn(name = "user_id", referencedColumnName = "id")
-  private Users users;
+  private Users user;
 
   @ManyToOne
   @JoinColumn(name = "model_id", referencedColumnName = "id")

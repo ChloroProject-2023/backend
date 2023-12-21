@@ -30,7 +30,7 @@ public class Resources {
 
   @ManyToOne
   @JoinColumn(name = "user_id", referencedColumnName = "id")
-  private Users users;
+  private Users user;
 
   @OneToOne(mappedBy = "resources", cascade = CascadeType.PERSIST)
   private Inferences inferences;

@@ -34,7 +34,7 @@ public class Inferences {
 
   @ManyToOne
   @JoinColumn(name = "user_id", referencedColumnName = "id")
-  private Users users;
+  private Users user;
 
   @OneToOne
   @JoinColumn(name = "model_id", referencedColumnName = "id")
