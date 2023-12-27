@@ -2,7 +2,7 @@ package com.usth.edu.vn.Resource;
 
 import com.usth.edu.vn.Jwt.JwtIssuerType;
 import com.usth.edu.vn.Jwt.JwtService;
-import com.usth.edu.vn.repository.UserDaoRepository;
+
 import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -19,9 +19,6 @@ import java.util.Set;
 @ApplicationScoped
 @Produces(MediaType.TEXT_PLAIN)
 public class JwtResource {
-
-    @Inject
-    UserDaoRepository userDaoRepository;
 
     @Inject
     JwtService jwtService;

@@ -13,7 +13,7 @@ import lombok.Data;
 @Entity
 @Table(name = "users", schema = "user_management")
 @UserDefinition
-public class UserDAO {
+public class Users {
 
     @Id
     private Long id;
