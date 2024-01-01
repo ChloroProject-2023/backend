@@ -51,38 +51,24 @@ public class UserRepository implements PanacheRepository<Users> {
         }
     }
 
-    public void updateUser(String username, String password, Users user) throws CustomException {
-        if (findByUsername(username).isEmpty()) {
-            throw new CustomException(USER_NOT_FOUND);
-        } else {
-            Users oldUser = findByUsername(username).get();
-            UserDetails userDetails = userDetailsRepository.findById(oldUser.getUserDetails().getId());
-            if (password != null) {
-                if (oldUser.getPassword().equals(BcryptUtil.bcryptHash(password))) {
-                    oldUser.setPassword(password);
-                }
-                else {
-                    throw new CustomException(INCORRECT_PASSWORD);
-            }
-            if (user.getRoles() != null) {
-                oldUser.setRoles(user.getRoles());
-            }
-            String firstname = user.getUserDetails().getFirstname();
-            if (firstname != null) {
-               userDetails.setFirstname(firstname);
-            }
-            String lastname = user.getUserDetails().getLastname();
-            if (lastname != null) {
-                userDetails.setLastname(lastname);
-            }
-            String email = user.getUserDetails().getEmail();
-            if (email != null) {
-                userDetails.setEmail(email);
-            }
-            persist(oldUser);
-            userDetailsRepository.persist(userDetails);
-        }
-      }
+    public void updateUser(String username, Users user) throws CustomException {
+        findByUsername(username).map(
+                u -> {
+                  u.setRoles(user.getRoles());
+                  u.getUserDetails().setFirstname(user.getUserDetails().getFirstname());
+                  u.getUserDetails().setLastname(user.getUserDetails().getLastname());
+                  u.getUserDetails().setEmail(user.getUserDetails().getEmail());
+                  return u;
+                }).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+    }
+
+    public void updatePassword(long id ,String oldPassword, String newPassword) throws CustomException {
+        Optional<Users> user = findByIdOptional(id);
+        if (user.isPresent()) {
+          if (BcryptUtil.matches(oldPassword, user.get().getPassword())) {
+            user.get().setPassword(newPassword);
+          } else throw new CustomException(INCORRECT_PASSWORD);
+        } else throw new CustomException(USER_NOT_FOUND);
     }
     
     public void deleteUser(String username) throws CustomException {

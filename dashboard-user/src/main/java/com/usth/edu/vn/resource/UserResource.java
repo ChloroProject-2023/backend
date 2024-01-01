@@ -100,9 +100,18 @@ public class UserResource extends PanacheEntityBase {
     @Path("users/update")
     @Transactional
     @RolesAllowed({"admin", "user"})
-    public Response updateUser(@QueryParam("username") String username, @QueryParam("password") String password, Users user) throws CustomException {
-        userRepository.updateUser(username, password, user);
+    public Response updateUser(@QueryParam("username") String username, Users user) throws CustomException {
+        userRepository.updateUser(username, user);
         return Response.created(URI.create("/update-user/" + user.getId())).build();
+    }
+
+    @POST
+    @Path("users/updatePassword")
+    @Transactional
+    @RolesAllowed({"admin", "user"})
+    public Response updatePassword(@QueryParam("id") long id, @QueryParam("oldPassword") String oldPassword, @QueryParam("newPassword") String newPassword) throws CustomException {
+        userRepository.updatePassword(id, oldPassword, newPassword);
+        return Response.created(URI.create("/user/"+ id +"/update-password/")).build();
     }
     
     @DELETE
