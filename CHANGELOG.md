@@ -14,9 +14,11 @@
 
 ## Wed, 13, Dec/2023
 
+### Feature
+
 - **User service:**
   - **model:** init new models to manage entities used for storing model deep learning, user's resources, ...
-  - **service:** create CUD for managing model information.
+  - **service:** create CRUD for managing model information.
 
 ## Thu, 14, Dec/2023
 
@@ -40,4 +42,15 @@
 - **User service:**
   - **service:** remove JPAStream, implement project uniquely with Hibernate ORM.
 - **JWT security:**
-  - **sevice:** fix the expiration date after sign a key.
+  - **service:** fix the expiration date after signing a key.
+
+## Fri, 29, Dec/2023
+
+- **User service:**
+  - **service** & **endpoint**: finish testing and optimizing CRUD system of users and models.
+
+## Sun, 31, Dec/2023
+
+- **User service:**
+  - **service**: finish CRUD for resources and inference (state or result of running models).
+  - **endpoint:** finish basic CRUD endpoint for all entities.
