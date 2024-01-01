@@ -41,7 +41,7 @@ mvn compile quarkus:dev
 - create new shell and run _dashboard-user_ for testing endpoint (Running on port 8081)
 
 ```shell script
-cd dashboard-security
+cd dashboard-user
 mvn compile quarkus:dev
 ```
 
@@ -65,7 +65,7 @@ http://localhost:8080/users
 ```json
 {
   "username": "username",
-  "password": "@Password123", // password must be at least 8 characters, contain at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character
+  "password": "@Password123",
   "userDetails": {
     "firstname": "firstname",
     "lastname": "lastname",
