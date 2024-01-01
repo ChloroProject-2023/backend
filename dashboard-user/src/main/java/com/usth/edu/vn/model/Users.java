@@ -8,10 +8,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.usth.edu.vn.validation.ValidPassword;
 
 import io.quarkus.elytron.security.common.BcryptUtil;
-import io.quarkus.security.jpa.Password;
-import io.quarkus.security.jpa.Roles;
-import io.quarkus.security.jpa.UserDefinition;
-import io.quarkus.security.jpa.Username;
+import io.quarkus.security.jpa.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -49,7 +46,7 @@ public class Users {
     private String roles;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private UserDetails userDetails;
+    private UserDetails userDetail;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Models> models;
