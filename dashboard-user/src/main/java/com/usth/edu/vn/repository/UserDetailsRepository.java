@@ -26,7 +26,7 @@ public class UserDetailsRepository implements PanacheRepository<UserDetails> {
     }
 
     public UserDetails getUserDetail(long user_id) {
-      UserDetails userDetail = userRepository.findById(user_id).getUserDetails();
+      UserDetails userDetail = userRepository.findById(user_id).getUserDetail();
       UserDetails tempUserDetail = UserDetails
         .builder()
         .firstname(userDetail.getFirstname())
