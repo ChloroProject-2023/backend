@@ -26,7 +26,7 @@ public class CustomExceptionHandler implements ExceptionMapper<CustomException> 
                     .build();
         } else {
             return Response.status(BAD_REQUEST)
-                    .entity("What is this exception ???")
+                    .entity(e.getMessage())
                     .build();
         }
     }
