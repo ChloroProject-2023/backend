@@ -3,8 +3,11 @@ package com.usth.edu.vn.resource;
 import java.net.URI;
 import java.util.List;
 
+import com.usth.edu.vn.exception.CustomException;
 import com.usth.edu.vn.model.Models;
 import com.usth.edu.vn.model.Ratings;
+import com.usth.edu.vn.model.dto.ModelDto;
+import com.usth.edu.vn.model.dto.RatingDto;
 import com.usth.edu.vn.repository.ModelRepository;
 import com.usth.edu.vn.repository.RatingRepository;
 
@@ -30,30 +33,12 @@ public class ModelResource {
   @Inject
   RatingRepository ratingRepository;
 
+  // Model endpoints
   @GET
   @Path("/")
   @RolesAllowed({ "admin", "user" })
   public Response getAllModels() {
-    List<Models> allModels = modelRepository.listAll();
-    return Response.ok(allModels).build();
-  }
-
-  @GET
-  @Path("/paging/{pageNo}")
-  @RolesAllowed({ "admin", "user" })
-  public Response getAllModels(long pageNo) {
-    List<Models> allModels = modelRepository.findPagingModels(pageNo);
-    if (allModels.isEmpty()) {
-      return Response.status(BAD_REQUEST).build();
-    }
-    return Response.ok(allModels).build();
-  }
-
-  @GET
-  @Path("/search/{startWith}")
-  @RolesAllowed({"admin", "user"})
-  public Response getSearchModels (String startWith) {
-    List<Models> allModels = modelRepository.searchModels(startWith);
+    List<ModelDto> allModels = modelRepository.findAllModels();
     return Response.ok(allModels).build();
   }
 
@@ -61,27 +46,48 @@ public class ModelResource {
   @Path("{id}")
   @RolesAllowed({ "admin", "user" })
   public Response getModelById(long id) {
-    Models model = modelRepository.getModelById(id);
+    ModelDto model = modelRepository.findModelById(id);
     return Response.ok(model).build();
   }
 
   @GET
-  @Path("/models-by-user")
+  @Path("/paging/{pageNo}")
   @RolesAllowed({ "admin", "user" })
-  public Response getModelsByUser(@QueryParam("user_id") long user_id) {
-    List<Models> allModels = modelRepository.findByUser(user_id);
+  public Response getAllModels(int pageNo) {
+    List<ModelDto> allModels = modelRepository.findPagingModels(pageNo);
+//    if (allModels.isEmpty()) {
+//      return Response.status(BAD_REQUEST).build();
+//    }
     return Response.ok(allModels).build();
   }
 
   @GET
-  @Path("/ratings/{model_id}")
+  @Path("/search/{keyword}")
   @RolesAllowed({ "admin", "user" })
-  public Response getModelRatings(long model_id) {
-    List<Ratings> allRatings = ratingRepository.getRatingByModel(model_id);
-    return Response.ok(allRatings).build();
+  public Response getSearchModels(String keyword) {
+    List<ModelDto> allModels = modelRepository.findMatchedModels(keyword);
+//    if (allModels.isEmpty()) {
+//      return Response.status(BAD_REQUEST).build();
+//    }
+    return Response.ok(allModels).build();
   }
 
-  // Model CUD
+  @GET
+  @Path("/models-by-user/{user_id}")
+  @RolesAllowed({ "admin", "user" })
+  public Response getModelsByUser(long user_id) {
+    List<ModelDto> allModels = modelRepository.findModelsByUser(user_id);
+    return Response.ok(allModels).build();
+  }
+
+  @GET
+  @Path("/count")
+  @RolesAllowed({ "admin", "user" })
+  public Response getModelCount() {
+    long count = modelRepository.count();
+    return Response.ok(count).build();
+  }
+
   @POST
   @Path("/create")
   @RolesAllowed({ "admin", "user" })
@@ -89,18 +95,18 @@ public class ModelResource {
   public Response createModel(@QueryParam("user_id") long user_id, Models model) {
     modelRepository.addModel(user_id, model);
     if (modelRepository.isPersistent(model)) {
-      return Response.created(URI.create("/new-model/" + model.getId())).build();
+      return Response.created(URI.create("/user/" + user_id + "/new-model/" + model.getId())).build();
     }
     return Response.status(BAD_REQUEST).build();
   }
 
-  @POST
+  @PUT
   @Path("/update/{model_id}")
   @RolesAllowed({ "admin", "user" })
   @Transactional
   public Response updateModel(long model_id, Models model) {
     modelRepository.updateModel(model_id, model);
-    return Response.created(URI.create("/update-model/" + model.getId())).build();
+    return Response.created(URI.create("/update-model/" + model_id)).entity(model).build();
   }
 
   @DELETE
@@ -109,6 +115,68 @@ public class ModelResource {
   @Transactional
   public Response deleteModel(long id) {
     modelRepository.deleteModel(id);
-    return Response.ok().build();
+    return Response.ok("Model" + id + " is deleted!").build();
+  }
+
+  // Ratings endpoints
+  @GET
+  @Path("/ratings")
+  @RolesAllowed({ "admin", "user" })
+  public Response getAllRatings() {
+    List<RatingDto> allRatings = ratingRepository.findAllRatings();
+    return Response.ok(allRatings).build();
+  }
+
+  @GET
+  @Path("/ratings-by-id/{id}")
+  @RolesAllowed({ "admin", "user" })
+  public Response getRatingById(long id) {
+    RatingDto rating = ratingRepository.findRatingById(id);
+    return Response.ok(rating).build();
+  }
+
+  @GET
+  @Path("/ratings-by-model_id/{model_id}")
+  @RolesAllowed({ "admin", "user" })
+  public Response getRatingsByModelId(long model_id) {
+    List<RatingDto> allRatings = ratingRepository.findRatingByModelId(model_id);
+    return Response.ok(allRatings).build();
+  }
+
+  @GET
+  @Path("/ratings-by-user_id/{user_id}")
+  @RolesAllowed({"admin", "user"})
+  public Response getRatingsByUserId(long user_id) {
+    List<RatingDto> allRatings = ratingRepository.findRatingByUserId(user_id);
+    return Response.ok(allRatings).build();
+  }
+
+  @POST
+  @Path("/ratings/create")
+  @RolesAllowed({ "admin", "user" })
+  @Transactional
+  public Response createRating(@QueryParam("user_id") long user_id, @QueryParam("model_id") long model_id,
+      Ratings rating) throws CustomException {
+    ratingRepository.addRating(user_id, model_id, rating);
+    return Response.created(URI.create("/user/" + user_id + "/model/" + model_id + "/new-rating/" + rating.getId())).build();
+  }
+
+  @PUT
+  @Path("/ratings/update")
+  @RolesAllowed({ "admin", "user" })
+  @Transactional
+  public Response updateRating(@QueryParam("user_id") long user_id, @QueryParam("model_id") long model_id,
+      Ratings rating) {
+    ratingRepository.updateRating(user_id, model_id, rating);
+    return Response.created(URI.create("/user/" + user_id + "/model/" + model_id + "/rating-update/" + rating.getId())).build();
+  }
+
+  @DELETE
+  @Path("/ratings/delete/{id}")
+  @RolesAllowed({ "admin", "user" })
+  @Transactional
+  public Response deleteRating(long id) {
+    ratingRepository.deleteRating(id);
+    return Response.ok("Rating " + id + " is deleted!").build();
   }
 }

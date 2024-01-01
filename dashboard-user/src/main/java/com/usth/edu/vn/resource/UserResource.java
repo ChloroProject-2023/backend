@@ -1,9 +1,8 @@
 package com.usth.edu.vn.resource;
 
 import com.usth.edu.vn.exception.CustomException;
-import com.usth.edu.vn.model.UserDetails;
 import com.usth.edu.vn.model.Users;
-import com.usth.edu.vn.repository.UserDetailsRepository;
+import com.usth.edu.vn.model.dto.UserDto;
 import com.usth.edu.vn.repository.UserRepository;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
@@ -30,29 +29,29 @@ public class UserResource {
     @Inject
     UserRepository userRepository;
 
-    @Inject
-    UserDetailsRepository userDetailsRepository;
-
     @GET
     @Path("{id}")
     @RolesAllowed({"admin", "user"})
-    public Response getUserById(long id) {
-      Users user = userRepository.getUserById(id);
+    public Response getUserById(long id) throws CustomException {
+       Optional<UserDto> user = userRepository.findUserById(id);
+        if (user.isEmpty()) {
+            throw new CustomException(USER_NOT_FOUND);
+        }
       return Response.ok(user).build();
     }
 
     @GET
     @RolesAllowed({"admin", "user"})
     public Response getAllUsers() {
-        List<Users> allUsers = userRepository.listAll();
+        List<UserDto> allUsers = userRepository.findAllUsers();
         return Response.ok(allUsers).build();
     }
 
     @GET
     @Path("/paging/{pageNo}")
     @RolesAllowed({"admin", "user"})
-    public Response getAllUsers(long pageNo) {
-        List<UserDetails> allUsers = userDetailsRepository.findPagingUsers(pageNo);
+    public Response getAllUsers(int pageNo) {
+        List<UserDto> allUsers = userRepository.findPagingUsers(pageNo);
         if(allUsers.isEmpty()) {
             return Response.status(NOT_FOUND).build();
         }
@@ -60,10 +59,10 @@ public class UserResource {
     }
 
     @GET
-    @Path("/search/{startsWith}")
+    @Path("/search/{keyword}")
     @RolesAllowed({"admin", "user"})
-    public Response getSearchUsers( String startsWith) {
-        List<UserDetails> anyUsers = userDetailsRepository.searchUsers(startsWith);
+    public Response getSearchUsers( String keyword) {
+        List<UserDto> anyUsers = userRepository.findMatchedUsers(keyword);
         if (anyUsers.isEmpty()) {
             return Response.status(NOT_FOUND).build();
         }
@@ -74,12 +73,20 @@ public class UserResource {
     @Path("/profile")
     @RolesAllowed({"admin", "user"})
     public Response getProfile (@QueryParam("username") String username) throws CustomException{
-        Optional<Users> user = userRepository.findByUsername(username);
+        Optional<UserDto> user = userRepository.findUserByUsername(username);
         if (user.isEmpty()) {
             throw new CustomException(USER_NOT_FOUND);
         } else {
             return Response.ok(user.get()).build();
         }
+    }
+
+    @GET
+    @Path("/count")
+    @RolesAllowed({"admin", "user"})
+    public Response getUsersCount() {
+        long userCount = userRepository.count();
+        return Response.ok(userCount).build();
     }
 
     @POST
@@ -89,19 +96,28 @@ public class UserResource {
     public Response createUser(Users user) throws CustomException {
         userRepository.addUser(user);
         if (userRepository.isPersistent(user)) {
-            return Response.created(URI.create("/new-user/" + user.getId())).build();
+            return Response.created(URI.create("/new-user/" + user.getId())).entity(user).build();
         }
         return Response.status(BAD_REQUEST).build();
     }
 
-    @POST
+    @PUT
     @Path("/update")
     @Transactional
     @RolesAllowed({"admin", "user"})
-    public Response updateUser(@QueryParam("username") String username, @QueryParam("password") String password, Users user) throws CustomException {
-        userRepository.updateUser(username, password, user);
-        return Response.created(URI.create("/update-user/" + user.getId())).build();
+    public Response updateUser(@QueryParam("id") long id, Users user) throws CustomException {
+        userRepository.updateUser(id, user);
+        return Response.created(URI.create("/update-user/" + id)).entity(user).build();
     }
+
+    @PUT
+    @Path("/updatePassword")
+    @Transactional
+    @RolesAllowed({"admin", "user"})
+    public Response updatePassword(@QueryParam("id") long id, @QueryParam("oldPassword") String oldPassword, @QueryParam("newPassword") String newPassword) throws CustomException {
+        userRepository.updatePassword(id, oldPassword, newPassword);
+        return Response.created(URI.create("/update-password-user/" + id)).build();
+  }
     
     @DELETE
     @Path("/delete")
@@ -110,5 +126,14 @@ public class UserResource {
     public Response deleteUser(@QueryParam("username") String username) throws CustomException {
         userRepository.deleteUser(username);
         return Response.ok("User " + username +" is deleted!").build();
+    }
+
+    @DELETE
+    @Path("/delete/{id}")
+    @Transactional
+    @RolesAllowed({"admin", "user"})
+    public Response deleteUser(@PathParam("id") long id) throws CustomException {
+      userRepository.deleteUser(id);
+      return Response.ok("User " + id +" is deleted!").build();
     }
 }
