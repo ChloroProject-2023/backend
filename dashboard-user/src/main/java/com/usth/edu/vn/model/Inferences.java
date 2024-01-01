@@ -38,9 +38,9 @@ public class Inferences {
 
   @OneToOne
   @JoinColumn(name = "model_id", referencedColumnName = "id")
-  private Models models;
+  private Models model;
 
   @OneToOne
-  @JoinColumn(name = "resrource_id", referencedColumnName = "id")
-  private Resources resources;
+  @JoinColumn(name = "resource_id", referencedColumnName = "id")
+  private Resources resource;
 }

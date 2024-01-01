@@ -32,6 +32,5 @@ public class Resources {
   @JoinColumn(name = "user_id", referencedColumnName = "id")
   private Users user;
 
-  @OneToOne(mappedBy = "resources", cascade = CascadeType.PERSIST)
-  private Inferences inferences;
+  private Inferences inference;
 }

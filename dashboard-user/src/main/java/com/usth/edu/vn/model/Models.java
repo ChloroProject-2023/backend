@@ -43,9 +43,9 @@ public class Models {
   @JoinColumn(name = "user_id", referencedColumnName = "id")
   private Users user;
 
-  @OneToOne(mappedBy = "models", cascade = CascadeType.PERSIST)
-  private Inferences inferences;
+  @OneToOne(mappedBy = "model", cascade = CascadeType.PERSIST)
+  private Inferences inference;
 
-  @OneToMany(mappedBy = "models", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<Ratings> ratings;
+  @OneToMany(mappedBy = "model", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<Ratings> rating;
 }
