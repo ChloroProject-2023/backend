@@ -12,7 +12,7 @@ public class JwtService  {
         return Jwt.issuer(issuer)
                 .subject(subject)
                 .groups(roles)
-                .expiresIn(300)
+                .expiresIn(86400)
                 .innerSign() // default Signature algorithm: RS256
                 .encrypt(); // default Key encryption algorithm: RSA-OAEP-256
     }
