@@ -1,6 +1,6 @@
 package com.usth.edu.vn.Resource;
 
-import com.usth.edu.vn.repository.UserDaoRepository;
+import com.usth.edu.vn.repository.UsersRepository;
 import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -19,7 +19,7 @@ import jakarta.ws.rs.core.SecurityContext;
 public class TestResource {
 
     @Inject
-    UserDaoRepository userDaoRepository;
+    UsersRepository usersRepository;
 
     @GET
     @Path("hello")
@@ -33,7 +33,7 @@ public class TestResource {
     @Path("role")
     @RolesAllowed({"admin", "user"})
     public Response role(@Context SecurityContext securityContext) {
-        return userDaoRepository
+        return usersRepository
                 .find("username", securityContext.getUserPrincipal().getName())
                 .singleResultOptional()
                 .map(u -> Response.ok(u.getRoles()).build())

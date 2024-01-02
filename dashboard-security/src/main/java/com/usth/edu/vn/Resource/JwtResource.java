@@ -2,14 +2,12 @@ package com.usth.edu.vn.Resource;
 
 import com.usth.edu.vn.Jwt.JwtIssuerType;
 import com.usth.edu.vn.Jwt.JwtService;
-import com.usth.edu.vn.repository.UserDaoRepository;
+
 import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -21,15 +19,12 @@ import java.util.Set;
 public class JwtResource {
 
     @Inject
-    UserDaoRepository userDaoRepository;
-
-    @Inject
     JwtService jwtService;
 
     @Inject
     SecurityIdentity securityIdentity;
 
-    @GET
+    @POST
     @RolesAllowed({"admin", "user"})
     public Response getToken() {
         String username = securityIdentity.getPrincipal().getName();

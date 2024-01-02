@@ -1,140 +1,52 @@
-# dashboard (test service)
+# dashboard
 
-Web application for porject
+Web application for project
 
-- BI12-074 Đoàn Đình Đăng (Backend)
-- BI12-076 Mai Hải Đăng (Frontend API Handling)
-- BI12-073 Trần Hải Đăng (Frontend UI)
+- [Đoàn Đình Đăng](https://github.com/dangdd2003) (Backend - Server-side)
+- [Mai Hải Đăng](https://github.com/Vivarium69420) (Frontend API Handling - Client-side)
+- [Trần Hải Đăng](https://github.com/thdgg) (Frontend UI)
+
+(for Website service, redirect to [dashboard-UI](https://github.com/ChloroProject-2023/dashboard-UI) repository)
 
 # Normal build and run
 
 ## Requirement
 
-- JAVA_HOME set up (recommended jdk 17)
-- Maven set up, (MAVEN_HOME set up for downloading extension)
-- Docker set up (future update)
-- Mysql running on port 3306 with created schema *user-management* for storing data
+- JAVA_HOME set up (recommended jdk 17, most of dependencies and classes work well with jdk 17)
+- Maven set up, (MAVEN_HOME set up for downloading extension,recommend at least version 3.9.6)
+- Docker set up (for running in docker)
+- Mysql/Mariadb running on port 3306 with created schema _user-management_ for data persistence.
 
-## Quick run (Require docker for building images)
+## Run in docker (Recommended)
 
 ```shell script
 ./quickstart.sh
 ```
+
 (Still updating and fixing)
 
 ## Normal build
 
-- Generate RSA key used for security of the project(for window: open git bash terminal or run in WSL bash terminal)
+- Generate RSA key used for project's security (every time this script generates a new key, all the previous JWT will die)
 
 ```shell script
 ./keygen.sh
 ```
 
-- run *dashboard-security* service to get *JWT* (Running on port 8080)
+- Run _dashboard-security_ service to get _JWT_ (Running on port 8080)
 
 ```shell script
 cd dashboard-security
 mvn compile quarkus:dev
 ```
 
-- create new shell and run *dashboard-user* for testing endpoint (Running on port 8081)
+- Create new shell and run _dashboard-user_ for testing endpoint (Running on port 8081)
 
 ```shell script
-cd dashboard-security
+cd dashboard-user
 mvn compile quarkus:dev
 ```
 
-# Accessing API
+# Access API - Endpoint
 
-- Test on **Postman** for convenient UI
-- Test on **swagger-ui** at endpoint **/q/swagger-ui**
-    - for *dashboard-security*: > http://localhost:8080/q/swagger-ui
-    - for *dashboard-user*: http://localhost:8081/q/swagger-ui
-
-## Register new user
-
-- Method: **POST**: (Permission: All)
-
-```url
-http://localhost:8080/users
-```
-
-- Request Body:
-
-```json
-{
-    "username": "username",
-    "password": "@Password123", // password must be at least 8 characters, contain at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character
-    "userDetails" : {
-        "firstname": "firstname",
-        "lastname": "lastname",
-        "email": "email@gmail.com",
-    }
-}
-```
-
-- Future update:
-
-    - verify 2 time entered password (maybe done in Frontend)
-    - verify account with google, facebook, github, etc...
-
-## Login to get jwt
-
-- Method: **GET** (Permission: **admin**, **user**)
-
-```url
-http://localhost:8080/jwt
-```
-
-- This endpoint will return a jwt token for accessing other endpoint
-
-## Get user information
-
-- Method: **GET** (Permission: **admin**, **user**)
-    
-    Get list of user information
-
-```url
-http://localhost:8081/users
-```
-
-- Method: **GET** (Permission: **admin**, **user**)
-    
-    Get a page of 20 users
-
-```url
-http://localhost:8081/users/paging/{pageNo}
-```
-
-- Method **GET** (Permission: **admin**, **user**)
-    
-    Search for user started with specific string
-
-```url
-http://localhost:8081/users/search/{startsWith}
-```
-
-- Method **Post** (Permission: **admin**, **user**)
-    
-    Update user information (Still fixing)
-
-## Response body
-
-```json
-[
-    {
-        "id": {id},
-        "firstname": "firstname",
-        "lastname": "lastname",
-        "email": "email@gmail.com",
-        "createTime": "{time}",
-        "users": {
-            "id": {id},
-            "username": "username",
-            "password": "{hashed password}",
-            "roles": "user",
-            "userDetails": {id}
-        }
-    }
-]
-```
+- Please refer to [API doc]() page.
