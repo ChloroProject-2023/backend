@@ -10,6 +10,7 @@ import com.usth.edu.vn.repository.InferenceRepository;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -57,6 +58,7 @@ public class InferenceResource {
   @POST
   @Path("/create")
   @RolesAllowed({ "admin", "user" })
+  @Transactional
   public Response createInference(
       @QueryParam("user_id") long user_id,
       @QueryParam("model_id") long model_id,
@@ -68,6 +70,7 @@ public class InferenceResource {
 
   @DELETE
   @Path("/delete/{id}")
+  @Transactional
   @RolesAllowed({ "admin", "user" })
   public Response deleteInference(long id) {
     inferenceRepository.deleteInference(id);

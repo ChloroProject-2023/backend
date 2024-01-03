@@ -33,6 +33,7 @@ public class InferenceRepository implements PanacheRepository<Inferences> {
     return entityManager.createQuery("""
         SELECT NEW com.usth.edu.vn.model.dto.InferenceDto(
             i.id,
+            i.result,
             u.id,
             ud.firstname,
             ud.lastname,
@@ -59,6 +60,7 @@ public class InferenceRepository implements PanacheRepository<Inferences> {
     return entityManager.createQuery("""
         SELECT NEW com.usth.edu.vn.model.dto.InferenceDto(
             i.id,
+            i.result,
             u.id,
             ud.firstname,
             ud.lastname,
@@ -83,6 +85,7 @@ public class InferenceRepository implements PanacheRepository<Inferences> {
     return entityManager.createQuery("""
         SELECT NEW com.usth.edu.vn.model.dto.InferenceDto(
             i.id,
+            i.result,
             u.id,
             ud.firstname,
             ud.lastname,
@@ -109,6 +112,7 @@ public class InferenceRepository implements PanacheRepository<Inferences> {
     return entityManager.createQuery("""
         SELECT NEW com.usth.edu.vn.model.dto.InferenceDto(
             i.id,
+            i.result,
             u.id,
             ud.firstname,
             ud.lastname,
