@@ -36,11 +36,11 @@ public class Inferences {
   @JoinColumn(name = "user_id", referencedColumnName = "id")
   private Users user;
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "model_id", referencedColumnName = "id")
   private Models model;
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "resource_id", referencedColumnName = "id")
   private Resources resource;
 }

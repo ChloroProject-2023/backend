@@ -10,6 +10,8 @@ import lombok.Data;
 public class InferenceDto {
   private long id;
 
+  private String result;
+
   private long user_id;
 
   private String firstname;

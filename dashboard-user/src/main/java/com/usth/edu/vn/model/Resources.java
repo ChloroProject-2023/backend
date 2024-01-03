@@ -1,6 +1,7 @@
 package com.usth.edu.vn.model;
 
 import java.util.Date;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -32,5 +33,6 @@ public class Resources {
   @JoinColumn(name = "user_id", referencedColumnName = "id")
   private Users user;
 
-  private Inferences inference;
+  @OneToMany(mappedBy = "resource", cascade = CascadeType.PERSIST, orphanRemoval = true)
+  private Set<Inferences> inference;
 }
