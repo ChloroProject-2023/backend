@@ -55,9 +55,9 @@ public class ModelResource {
   @RolesAllowed({ "admin", "user" })
   public Response getAllModels(int pageNo) {
     List<ModelDto> allModels = modelRepository.findPagingModels(pageNo);
-//    if (allModels.isEmpty()) {
-//      return Response.status(BAD_REQUEST).build();
-//    }
+    // if (allModels.isEmpty()) {
+    // return Response.status(BAD_REQUEST).build();
+    // }
     return Response.ok(allModels).build();
   }
 
@@ -66,9 +66,9 @@ public class ModelResource {
   @RolesAllowed({ "admin", "user" })
   public Response getSearchModels(String keyword) {
     List<ModelDto> allModels = modelRepository.findMatchedModels(keyword);
-//    if (allModels.isEmpty()) {
-//      return Response.status(BAD_REQUEST).build();
-//    }
+    // if (allModels.isEmpty()) {
+    // return Response.status(BAD_REQUEST).build();
+    // }
     return Response.ok(allModels).build();
   }
 
@@ -78,6 +78,22 @@ public class ModelResource {
   public Response getModelsByUser(long user_id) {
     List<ModelDto> allModels = modelRepository.findModelsByUser(user_id);
     return Response.ok(allModels).build();
+  }
+
+  @GET
+  @Path("/top10-recently-use")
+  @RolesAllowed({ "admin", "user" })
+  public Response getTopTenRecentlyUsedModels() {
+    List<ModelDto> top10Models = modelRepository.findTopTenRecentlyUsedModels();
+    return Response.ok(top10Models).build();
+  }
+
+  @GET
+  @Path("/top10-most-use")
+  @RolesAllowed({ "admin", "user" })
+  public Response getTopTenMostUsedModels() {
+    List<ModelDto> top10Models = modelRepository.findTopTenMostUsedModels();
+    return Response.ok(top10Models).build();
   }
 
   @GET
@@ -104,7 +120,7 @@ public class ModelResource {
   @Path("/update/{model_id}")
   @RolesAllowed({ "admin", "user" })
   @Transactional
-  public Response updateModel(long model_id, Models model) {
+  public Response updateModel(long model_id, Models model) throws CustomException {
     modelRepository.updateModel(model_id, model);
     return Response.created(URI.create("/update-model/" + model_id)).entity(model).build();
   }
@@ -145,7 +161,7 @@ public class ModelResource {
 
   @GET
   @Path("/ratings-by-user_id/{user_id}")
-  @RolesAllowed({"admin", "user"})
+  @RolesAllowed({ "admin", "user" })
   public Response getRatingsByUserId(long user_id) {
     List<RatingDto> allRatings = ratingRepository.findRatingByUserId(user_id);
     return Response.ok(allRatings).build();
@@ -155,20 +171,27 @@ public class ModelResource {
   @Path("/ratings/create")
   @RolesAllowed({ "admin", "user" })
   @Transactional
-  public Response createRating(@QueryParam("user_id") long user_id, @QueryParam("model_id") long model_id,
+  public Response createRating(
+      @QueryParam("user_id") long user_id,
+      @QueryParam("model_id") long model_id,
       Ratings rating) throws CustomException {
     ratingRepository.addRating(user_id, model_id, rating);
-    return Response.created(URI.create("/user/" + user_id + "/model/" + model_id + "/new-rating/" + rating.getId())).build();
+    return Response.created(URI.create("/user/" + user_id + "/model/" + model_id + "/new-rating/" + rating.getId()))
+        .build();
   }
 
   @PUT
   @Path("/ratings/update")
   @RolesAllowed({ "admin", "user" })
   @Transactional
-  public Response updateRating(@QueryParam("user_id") long user_id, @QueryParam("model_id") long model_id,
-      Ratings rating) {
+  public Response updateRating(
+      @QueryParam("user_id") long user_id,
+      @QueryParam("model_id") long model_id,
+      Ratings rating) throws CustomException {
     ratingRepository.updateRating(user_id, model_id, rating);
-    return Response.created(URI.create("/user/" + user_id + "/model/" + model_id + "/rating-update/" + rating.getId())).build();
+    return Response.created(URI.create("/user/" + user_id + "/model/" + model_id + "/rating-update/" + rating.getId()))
+        .entity(rating)
+        .build();
   }
 
   @DELETE

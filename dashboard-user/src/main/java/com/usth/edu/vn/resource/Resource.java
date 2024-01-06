@@ -1,9 +1,9 @@
 package com.usth.edu.vn.resource;
 
-
 import java.net.URI;
 import java.util.List;
 
+import com.usth.edu.vn.exception.CustomException;
 import com.usth.edu.vn.model.Resources;
 import com.usth.edu.vn.model.dto.ResourceDto;
 import com.usth.edu.vn.repository.ResourceRepository;
@@ -28,7 +28,7 @@ public class Resource {
   ResourceRepository resourceRepository;
 
   @GET
-  @RolesAllowed({"admin", "user"})
+  @RolesAllowed({ "admin", "user" })
   public Response getAllResources() {
     List<ResourceDto> allResources = resourceRepository.findAllResources();
     return Response.ok(allResources).build();
@@ -36,7 +36,7 @@ public class Resource {
 
   @GET
   @Path("/id/{id}")
-  @RolesAllowed({"admin", "user"})
+  @RolesAllowed({ "admin", "user" })
   public Response getResourceById(long id) {
     ResourceDto resourceDto = resourceRepository.findResourceById(id);
     return Response.ok(resourceDto).build();
@@ -44,7 +44,7 @@ public class Resource {
 
   @GET
   @Path("/user_id/{user_id}")
-  @RolesAllowed({"admin", "user"})
+  @RolesAllowed({ "admin", "user" })
   public Response getResourceByUserId(long user_id) {
     ResourceDto resourceDto = resourceRepository.findResourceByUserId(user_id);
     return Response.ok(resourceDto).build();
@@ -52,15 +52,15 @@ public class Resource {
 
   @GET
   @Path("/count")
-  @RolesAllowed({"admin", "user"})
+  @RolesAllowed({ "admin", "user" })
   public Response getResourceCount() {
     long count = resourceRepository.count();
     return Response.ok(count).build();
   }
-  
+
   @POST
   @Path("/create")
-  @RolesAllowed({"admin", "user"})
+  @RolesAllowed({ "admin", "user" })
   @Transactional
   public Response createResource(@QueryParam("user_id") long user_id, Resources resource) {
     resourceRepository.addResource(user_id, resource);
@@ -73,16 +73,17 @@ public class Resource {
 
   @PUT
   @Path("/update")
-  @RolesAllowed({"admin", "user"})
+  @RolesAllowed({ "admin", "user" })
   @Transactional
-  public Response updateResource(@QueryParam("user_id") long user_id, Resources resource) {
-    resourceRepository.addResource(user_id, resource);
-    return Response.created(URI.create("/user/" + user_id + "/resource-update/" + resource.getId())).entity(resource).build();
+  public Response updateResource(@QueryParam("id") long id, Resources resource) throws CustomException {
+    resourceRepository.updateResource(id, resource);
+    return Response.created(URI.create("/user/" + id + "/resource-update/" + resource.getId())).entity(resource)
+        .build();
   }
 
   @DELETE
   @Path("/delete/{id}")
-  @RolesAllowed({"admin", "user"})
+  @RolesAllowed({ "admin", "user" })
   @Transactional
   public Response deleteResource(long id) {
     resourceRepository.deleteResource(id);

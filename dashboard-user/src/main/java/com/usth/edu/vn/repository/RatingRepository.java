@@ -1,6 +1,5 @@
 package com.usth.edu.vn.repository;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -123,10 +122,10 @@ public class RatingRepository implements PanacheRepository<Ratings> {
   }
 
   public void addRating(long user_id, long model_id, Ratings rating) throws CustomException {
-//    Optional<Ratings> existedRating = streamAll()
-//            .filter(r ->
-//                    r.getUser().getId().equals(user_id) &&
-//                            r.getModel().getId().equals(model_id)).findAny();
+    // Optional<Ratings> existedRating = streamAll()
+    // .filter(r ->
+    // r.getUser().getId().equals(user_id) &&
+    // r.getModel().getId().equals(model_id)).findAny();
     Optional<Ratings> existedRating = entityManager.createQuery("""
         SELECT r
         FROM Ratings r
@@ -149,23 +148,31 @@ public class RatingRepository implements PanacheRepository<Ratings> {
     }
   }
 
-  public void updateRating(long user_id, long model_id, Ratings rating) {
-
+  public void updateRating(long user_id, long model_id, Ratings rating) throws CustomException {
+    Optional<Ratings> existedRating = entityManager.createQuery("""
+        SELECT r
+        FROM Ratings r
+        WHERE r.user.id = :user_id
+        AND r.model.id = :model_id
+        """, Ratings.class)
+        .setParameter("user_id", user_id)
+        .setParameter("model_id", model_id)
+        .getResultStream()
+        .findAny();
+    if (existedRating.isEmpty()) {
+      throw new CustomException("Have not rated this model before!");
+    } else {
+      Ratings saveRating = existedRating.get();
+      if (rating.getStars() != null) {
+        saveRating.setStars(rating.getStars());
+      }
+      if (rating.getComment() != null) {
+        saveRating.setComment(rating.getComment());
+      }
+    }
   }
 
   public void deleteRating(long id) {
     deleteById(id);
-  }
-
-  public List<Ratings> getRatingByUser(long user_id) {
-    Users user = userRepository.findById(user_id);
-    List<Ratings> ratings = new ArrayList<>(user.getRatings());
-    return ratings;
-  }
-
-  public List<Ratings> getRatingByModel(long model_id) {
-    Models models = modelRepository.findById(model_id);
-    List<Ratings> ratings = new ArrayList<>(models.getRating());
-    return ratings;
   }
 }

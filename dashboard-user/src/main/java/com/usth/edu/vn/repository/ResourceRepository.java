@@ -2,7 +2,9 @@ package com.usth.edu.vn.repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
+import com.usth.edu.vn.exception.CustomException;
 import com.usth.edu.vn.model.Resources;
 import com.usth.edu.vn.model.Users;
 import com.usth.edu.vn.model.dto.ResourceDto;
@@ -25,7 +27,7 @@ public class ResourceRepository implements PanacheRepository<Resources> {
     return entityManager.createQuery("""
         SELECT NEW com.usth.edu.vn.model.dto.ResourceDto(
             r.id,
-            r.filePath,
+            r.filepath,
             r.type,
             u.id,
             ud.firstname,
@@ -47,7 +49,7 @@ public class ResourceRepository implements PanacheRepository<Resources> {
     return entityManager.createQuery("""
         SELECT NEW com.usth.edu.vn.model.dto.ResourceDto(
             r.id,
-            r.filePath,
+            r.filepath,
             r.type,
             u.id,
             ud.firstname,
@@ -69,7 +71,7 @@ public class ResourceRepository implements PanacheRepository<Resources> {
     return entityManager.createQuery("""
         SELECT NEW com.usth.edu.vn.model.dto.ResourceDto(
             r.id,
-            r.filePath,
+            r.filepath,
             r.type,
             u.id,
             ud.firstname,
@@ -92,12 +94,24 @@ public class ResourceRepository implements PanacheRepository<Resources> {
     persist(resource);
   }
 
-  public void updateResource(long id, Resources resource) {
+  public void updateResource(long id, Resources resource) throws CustomException {
     findByIdOptional(id).map(r -> {
-      r.setFilePath(resource.getFilePath());
+      r.setFilepath(resource.getFilepath());
       r.setType(resource.getType());
       return r;
     });
+    Optional<Resources> existedResource = findByIdOptional(id);
+    if (existedResource.isEmpty()) {
+      throw new CustomException("Resource does not existed!");
+    } else {
+      Resources saveResource = existedResource.get();
+      if (resource.getFilepath() != null) {
+        saveResource.setFilepath(resource.getFilepath());
+      }
+      if (resource.getType() != null) {
+        saveResource.setType(resource.getType());
+      }
+    }
   }
 
   public void deleteResource(long id) {

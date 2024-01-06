@@ -177,25 +177,29 @@ public class UserRepository implements PanacheRepository<Users> {
   }
 
   public void updateUser(long id, Users user) throws CustomException {
-    findByIdOptional(id).map(u -> {
-      // u.setRoles(user.getRoles());
-      // u.getUserDetail().setFirstname(user.getUserDetail().getFirstname());
-      // u.getUserDetail().setLastname(user.getUserDetail().getLastname());
-      // u.getUserDetail().setEmail(user.getUserDetail().getEmail());
+    Optional<Users> existedUser = findByIdOptional(id);
+    if (existedUser.isEmpty()) {
+      throw new CustomException(USER_NOT_FOUND);
+    } else {
+      Users saveUser = existedUser.get();
       if (user.getRoles() != null) {
-        u.setRoles(user.getRoles());
+        saveUser.setRoles(user.getRoles());
       }
-      if (user.getUserDetail().getFirstname() != null) {
-        u.getUserDetail().setFirstname(user.getUserDetail().getFirstname());
+      if (user.getUserDetail() != null) {
+        String firstname = user.getUserDetail().getFirstname();
+        if (firstname != null) {
+          saveUser.getUserDetail().setFirstname(firstname);
+        }
+        String lastname = user.getUserDetail().getLastname();
+        if (lastname != null) {
+          saveUser.getUserDetail().setLastname(lastname);
+        }
+        String email = user.getUserDetail().getEmail();
+        if (email != null) {
+          saveUser.getUserDetail().setEmail(email);
+        }
       }
-      if (user.getUserDetail().getLastname() != null) {
-        u.getUserDetail().setLastname(user.getUserDetail().getLastname());
-      }
-      if (user.getUserDetail().getEmail() != null) {
-        u.getUserDetail().setEmail(user.getUserDetail().getEmail());
-      }
-      return u;
-    }).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+    }
   }
 
   public void updatePassword(long id, String oldPassword, String newPassword) throws CustomException {
