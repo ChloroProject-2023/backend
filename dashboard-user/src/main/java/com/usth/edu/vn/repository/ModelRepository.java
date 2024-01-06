@@ -1,8 +1,11 @@
 package com.usth.edu.vn.repository;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
+import com.usth.edu.vn.exception.CustomException;
 import com.usth.edu.vn.model.Models;
 import com.usth.edu.vn.model.Users;
 import com.usth.edu.vn.model.dto.ModelDto;
@@ -11,6 +14,7 @@ import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 @ApplicationScoped
 public class ModelRepository implements PanacheRepository<Models> {
@@ -39,7 +43,8 @@ public class ModelRepository implements PanacheRepository<Models> {
   public ModelDto findModelById(long id) {
     return entityManager
         .createQuery("""
-            SELECT new com.usth.edu.vn.model.dto.ModelDto(m.id,
+            SELECT new com.usth.edu.vn.model.dto.ModelDto(
+                  m.id,
                   m.name,
                   m.type,
                   m.filepath,
@@ -63,7 +68,8 @@ public class ModelRepository implements PanacheRepository<Models> {
   public List<ModelDto> findModelsByUser(long user_id) {
     return entityManager
         .createQuery("""
-            SELECT new com.usth.edu.vn.model.dto.ModelDto(m.id,
+            SELECT new com.usth.edu.vn.model.dto.ModelDto(
+                  m.id,
                   m.name,
                   m.type,
                   m.filepath,
@@ -87,7 +93,8 @@ public class ModelRepository implements PanacheRepository<Models> {
   public List<ModelDto> findAllModels() {
     return entityManager
         .createQuery("""
-            SELECT new com.usth.edu.vn.model.dto.ModelDto(m.id,
+            SELECT new com.usth.edu.vn.model.dto.ModelDto(
+                  m.id,
                   m.name,
                   m.type,
                   m.filepath,
@@ -106,10 +113,79 @@ public class ModelRepository implements PanacheRepository<Models> {
         .getResultList();
   }
 
+  public List<ModelDto> findTopTenRecentlyUsedModels() {
+    return entityManager
+        .createQuery("""
+            SELECT new com.usth.edu.vn.model.dto.ModelDto(
+                  m.id,
+                  m.name,
+                  m.type,
+                  m.filepath,
+                  m.description,
+                  m.user.id,
+                  ud.firstname,
+                  ud.lastname,
+                  m.createTime
+            )
+            FROM Models m
+            INNER JOIN Users u
+            ON u.id = m.user.id
+            INNER JOIN UserDetails ud
+            ON ud.id = u.userDetail.id
+            ORDER BY m.createTime DESC
+            """, ModelDto.class)
+        .getResultList();
+  }
+
+  public List<ModelDto> findTopTenMostUsedModels() {
+    Query query = entityManager
+        .createNativeQuery("""
+            SELECT
+                  m.id,
+                  m.name,
+                  m.type,
+                  m.filepath,
+                  m.description,
+                  m.user_id,
+                  ud.firstname,
+                  ud.lastname,
+                  m.createTime
+            FROM models m
+            INNER JOIN users u
+            ON u.id = m.user_id
+            INNER JOIN user_details ud
+            ON ud.user_id = u.id
+            INNER JOIN (
+            SELECT model_id
+            FROM inferences
+            GROUP BY model_id
+            ORDER BY COUNT(*) DESC
+            limit 10) AS new_i
+            ON new_i.model_id = m.id;
+            """);
+    List<Object[]> result = (List<Object[]>) query.getResultList();
+    List<ModelDto> allModels = new ArrayList<>(result.size());
+    for (Object[] o : result) {
+      ModelDto model = new ModelDto();
+      model.setId(Long.parseLong(o[0].toString()));
+      model.setName(o[1].toString());
+      model.setType(o[2].toString());
+      model.setFilepath(o[3].toString());
+      model.setDescription(o[4].toString());
+      model.setUser_id(Long.parseLong(o[5].toString()));
+      model.setFirstname(o[6].toString());
+      model.setLastname(o[7].toString());
+      model.setCreateTime((Date) o[8]);
+      allModels.add(model);
+    }
+    return allModels;
+  }
+
   public List<ModelDto> findPagingModels(int pageNo) {
     return entityManager
         .createQuery("""
-            SELECT new com.usth.edu.vn.model.dto.ModelDto(m.id,
+            SELECT new com.usth.edu.vn.model.dto.ModelDto(
+                  m.id,
                   m.name,
                   m.type,
                   m.filepath,
@@ -133,7 +209,8 @@ public class ModelRepository implements PanacheRepository<Models> {
   public List<ModelDto> findMatchedModels(String keyword) {
     return entityManager
         .createQuery("""
-              SELECT new com.usth.edu.vn.model.dto.ModelDto(m.id,
+              SELECT new com.usth.edu.vn.model.dto.ModelDto(
+                  m.id,
                   m.name,
                   m.type,
                   m.filepath,
@@ -165,13 +242,22 @@ public class ModelRepository implements PanacheRepository<Models> {
     persist(model);
   }
 
-  public void updateModel(long id, Models model) {
-    findByIdOptional(id).map(m -> {
-      m.setName(model.getName());
-      m.setType(model.getType());
-      m.setDescription(model.getDescription());
-      return m;
-    });
+  public void updateModel(long id, Models model) throws CustomException {
+    Optional<Models> existedModel = findByIdOptional(id);
+    if (existedModel.isEmpty()) {
+      throw new CustomException("Model does not existed!");
+    } else {
+      Models saveModel = existedModel.get();
+      if (model.getName() != null) {
+        saveModel.setName(model.getName());
+      }
+      if (model.getType() != null) {
+        saveModel.setType(model.getType());
+      }
+      if (model.getDescription() != null) {
+        saveModel.setDescription(model.getDescription());
+      }
+    }
   }
 
   public void deleteModel(long id) {
