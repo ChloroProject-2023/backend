@@ -32,7 +32,7 @@ public class UserRepository implements PanacheRepository<Users> {
 
   public Users getUserById(long id) {
     Users user = findById(id);
-      return Users
+    return Users
         .builder()
         .username(user.getUsername())
         .userDetail(userDetailsRepository.getUserDetail(id))
@@ -178,10 +178,22 @@ public class UserRepository implements PanacheRepository<Users> {
 
   public void updateUser(long id, Users user) throws CustomException {
     findByIdOptional(id).map(u -> {
-      u.setRoles(user.getRoles());
-      u.getUserDetail().setFirstname(user.getUserDetail().getFirstname());
-      u.getUserDetail().setLastname(user.getUserDetail().getLastname());
-      u.getUserDetail().setEmail(user.getUserDetail().getEmail());
+      // u.setRoles(user.getRoles());
+      // u.getUserDetail().setFirstname(user.getUserDetail().getFirstname());
+      // u.getUserDetail().setLastname(user.getUserDetail().getLastname());
+      // u.getUserDetail().setEmail(user.getUserDetail().getEmail());
+      if (user.getRoles() != null) {
+        u.setRoles(user.getRoles());
+      }
+      if (user.getUserDetail().getFirstname() != null) {
+        u.getUserDetail().setFirstname(user.getUserDetail().getFirstname());
+      }
+      if (user.getUserDetail().getLastname() != null) {
+        u.getUserDetail().setLastname(user.getUserDetail().getLastname());
+      }
+      if (user.getUserDetail().getEmail() != null) {
+        u.getUserDetail().setEmail(user.getUserDetail().getEmail());
+      }
       return u;
     }).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
   }

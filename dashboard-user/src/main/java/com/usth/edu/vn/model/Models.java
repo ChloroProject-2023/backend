@@ -47,5 +47,5 @@ public class Models {
   private Set<Inferences> inference;
 
   @OneToMany(mappedBy = "model", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<Ratings> rating;
+  private Set<Ratings> ratings;
 }

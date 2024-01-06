@@ -23,7 +23,7 @@ public class Resources {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  private String filePath;
+  private String filepath;
 
   private String type;
 

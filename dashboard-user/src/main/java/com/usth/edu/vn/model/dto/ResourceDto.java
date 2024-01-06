@@ -8,10 +8,10 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ResourceDto {
-  
+
   private long id;
 
-  private String filePath;
+  private String filepath;
 
   private String type;
 
