@@ -15,6 +15,8 @@ public class RatingDto {
 
   private long user_id;
 
+  private String username;
+
   private String lastname;
 
   private String firstname;

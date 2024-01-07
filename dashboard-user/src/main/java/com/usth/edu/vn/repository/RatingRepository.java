@@ -34,6 +34,7 @@ public class RatingRepository implements PanacheRepository<Ratings> {
             r.stars,
             r.comment,
             u.id,
+            u.username,
             ud.lastname,
             ud.firstname,
             m.id
@@ -56,6 +57,7 @@ public class RatingRepository implements PanacheRepository<Ratings> {
             r.stars,
             r.comment,
             u.id,
+            u.username,
             ud.lastname,
             ud.firstname,
             m.id
@@ -80,6 +82,7 @@ public class RatingRepository implements PanacheRepository<Ratings> {
             r.stars,
             r.comment,
             u.id,
+            u.username,
             ud.lastname,
             ud.firstname,
             m.id
@@ -104,6 +107,7 @@ public class RatingRepository implements PanacheRepository<Ratings> {
             r.stars,
             r.comment,
             u.id,
+            u.username,
             ud.lastname,
             ud.firstname,
             m.id
