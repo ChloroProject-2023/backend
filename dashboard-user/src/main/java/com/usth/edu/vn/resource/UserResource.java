@@ -50,8 +50,8 @@ public class UserResource {
     @GET
     @Path("/paging/{pageNo}")
     @RolesAllowed({"admin", "user"})
-    public Response getAllUsers(int pageNo) {
-        List<UserDto> allUsers = userRepository.findPagingUsers(pageNo);
+    public Response getAllUsers(@QueryParam("pageNo") int pageNo, @QueryParam("pageSize") int pageSize) {
+        List<UserDto> allUsers = userRepository.findPagingUsers(pageNo, pageSize);
         if(allUsers.isEmpty()) {
             return Response.status(NOT_FOUND).build();
         }
@@ -117,7 +117,7 @@ public class UserResource {
     public Response updatePassword(@QueryParam("id") long id, @QueryParam("oldPassword") String oldPassword, @QueryParam("newPassword") String newPassword) throws CustomException {
         userRepository.updatePassword(id, oldPassword, newPassword);
         return Response.created(URI.create("/update-password-user/" + id)).build();
-  }
+    }
     
     @DELETE
     @Path("/delete")
@@ -133,7 +133,7 @@ public class UserResource {
     @Transactional
     @RolesAllowed({"admin", "user"})
     public Response deleteUser(@PathParam("id") long id) throws CustomException {
-      userRepository.deleteUser(id);
-      return Response.ok("User " + id +" is deleted!").build();
+        userRepository.deleteUser(id);
+        return Response.ok("User " + id +" is deleted!").build();
     }
 }
