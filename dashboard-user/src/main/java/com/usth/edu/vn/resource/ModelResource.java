@@ -51,10 +51,10 @@ public class ModelResource {
   }
 
   @GET
-  @Path("/paging/{pageNo}")
+  @Path("/paging")
   @RolesAllowed({ "admin", "user" })
-  public Response getAllModels(int pageNo) {
-    List<ModelDto> allModels = modelRepository.findPagingModels(pageNo);
+  public Response getPagingModels(@QueryParam("pageNo") int pageNo, @QueryParam("pageSize") int pageSize) {
+    List<ModelDto> allModels = modelRepository.findPagingModels(pageNo, pageSize);
     // if (allModels.isEmpty()) {
     // return Response.status(BAD_REQUEST).build();
     // }
