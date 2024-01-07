@@ -49,6 +49,7 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.type,
                   m.filepath,
                   m.description,
+                  AVG(r.stars),
                   m.user.id,
                   u.username,
                   ud.firstname,
@@ -56,10 +57,13 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.createTime
             )
             FROM Models m
-            INNER JOIN Users u
+            LEFT JOIN Users u
             ON u.id = m.user.id
-            INNER JOIN UserDetails ud
+            LEFT JOIN UserDetails ud
             ON ud.id = u.userDetail.id
+            LEFT JOIN Ratings r
+            ON m.id = r.model.id
+            LEFT JOIN Inferences i
             WHERE m.id = :id
             """, ModelDto.class)
         .setParameter("id", id)
@@ -75,6 +79,7 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.type,
                   m.filepath,
                   m.description,
+                  AVG(r.stars),
                   m.user.id,
                   u.username,
                   ud.firstname,
@@ -82,11 +87,14 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.createTime
             )
             FROM Models m
-            INNER JOIN Users u
+            LEFT JOIN Users u
             ON u.id = m.user.id
-            INNER JOIN UserDetails ud
+            LEFT JOIN UserDetails ud
             ON ud.id = u.userDetail.id
+            LEFT JOIN Ratings r
+            ON m.id = r.model.id
             WHERE u.id = :user_id
+            GROUP BY m.id
             """, ModelDto.class)
         .setParameter("user_id", user_id)
         .getResultList();
@@ -101,6 +109,7 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.type,
                   m.filepath,
                   m.description,
+                  AVG(r.stars),
                   m.user.id,
                   u.username,
                   ud.firstname,
@@ -108,10 +117,13 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.createTime
             )
             FROM Models m
-            INNER JOIN Users u
+            LEFT JOIN Users u
             ON u.id = m.user.id
-            INNER JOIN UserDetails ud
+            LEFT JOIN UserDetails ud
             ON ud.id = u.userDetail.id
+            LEFT JOIN Ratings r
+            ON m.id = r.model.id
+            GROUP BY m.id
             """, ModelDto.class)
         .getResultList();
   }
@@ -125,6 +137,7 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.type,
                   m.filepath,
                   m.description,
+                  AVG(r.stars),
                   m.user.id,
                   u.username,
                   ud.firstname,
@@ -132,11 +145,15 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.createTime
             )
             FROM Models m
-            INNER JOIN Users u
+            LEFT JOIN Users u
             ON u.id = m.user.id
-            INNER JOIN UserDetails ud
+            LEFT JOIN UserDetails ud
             ON ud.id = u.userDetail.id
+            LEFT JOIN Ratings r
+            ON m.id = r.model.id
+            GROUP BY m.id
             ORDER BY m.createTime DESC
+            LIMIT 10
             """, ModelDto.class)
         .getResultList();
   }
@@ -150,23 +167,28 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.type,
                   m.filepath,
                   m.description,
+                  AVG(r.stars),
                   m.user_id,
                   u.username,
                   ud.firstname,
                   ud.lastname,
                   m.createTime
             FROM models m
-            INNER JOIN users u
+            LEFT JOIN users u
             ON u.id = m.user_id
-            INNER JOIN user_details ud
+            LEFT JOIN user_details ud
             ON ud.user_id = u.id
-            INNER JOIN (
+            LEFT JOIN (
             SELECT model_id
             FROM inferences
             GROUP BY model_id
-            ORDER BY COUNT(*) DESC
-            limit 10) AS new_i
-            ON new_i.model_id = m.id;
+            ORDER BY COUNT(*) DESC)
+            AS new_i
+            ON new_i.model_id = m.id
+            LEFT JOIN ratings r
+            ON m.id = r.model_id
+            GROUP BY m.id
+            LIMIT 10
             """);
     List<Object[]> result = (List<Object[]>) query.getResultList();
     List<ModelDto> allModels = new ArrayList<>(result.size());
@@ -177,17 +199,18 @@ public class ModelRepository implements PanacheRepository<Models> {
       model.setType(o[2].toString());
       model.setFilepath(o[3].toString());
       model.setDescription(o[4].toString());
-      model.setUser_id(Long.parseLong(o[5].toString()));
-      model.setUsername(o[6].toString());
-      model.setFirstname(o[7].toString());
-      model.setLastname(o[8].toString());
-      model.setCreateTime((Date) o[9]);
+      model.setStars(Double.parseDouble(o[5].toString()));
+      model.setUser_id(Long.parseLong(o[6].toString()));
+      model.setUsername(o[7].toString());
+      model.setFirstname(o[8].toString());
+      model.setLastname(o[9].toString());
+      model.setCreateTime((Date) o[10]);
       allModels.add(model);
     }
     return allModels;
   }
 
-  public List<ModelDto> findPagingModels(int pageNo) {
+  public List<ModelDto> findPagingModels(int pageNo, int pageSize) {
     return entityManager
         .createQuery("""
             SELECT new com.usth.edu.vn.model.dto.ModelDto(
@@ -196,6 +219,7 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.type,
                   m.filepath,
                   m.description,
+                  AVG(r.stars),
                   m.user.id,
                   u.username,
                   ud.firstname,
@@ -203,39 +227,46 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.createTime
             )
             FROM Models m
-            INNER JOIN Users u
+            LEFT JOIN Users u
             ON u.id = m.user.id
-            INNER JOIN UserDetails ud
+            LEFT JOIN UserDetails ud
             ON ud.id = u.userDetail.id
+            LEFT JOIN Ratings r
+            ON m.id = r.model.id
+            GROUP BY m.id
             """, ModelDto.class)
-        .setFirstResult((pageNo - 1) * PAGE_SIZE)
-        .setMaxResults(PAGE_SIZE)
+        .setFirstResult((pageNo - 1) * pageSize)
+        .setMaxResults(pageSize)
         .getResultList();
   }
 
   public List<ModelDto> findMatchedModels(String keyword) {
     return entityManager
         .createQuery("""
-              SELECT new com.usth.edu.vn.model.dto.ModelDto(
-                  m.id,
-                  m.name,
-                  m.type,
-                  m.filepath,
-                  m.description,
-                  m.user.id,
-                  u.username,
-                  ud.firstname,
-                  ud.lastname,
-                  m.createTime
-              )
-              FROM Models m
-              INNER JOIN Users u
-              ON u.id = m.user.id
-              INNER JOIN UserDetails ud
-              ON ud.id = u.userDetail.id
-              WHERE m.name LIKE :name
-              OR m.type LIKE :type
-              OR m.description LIKE :description
+            SELECT new com.usth.edu.vn.model.dto.ModelDto(
+                m.id,
+                m.name,
+                m.type,
+                m.filepath,
+                m.description,
+                AVG(r.stars),
+                m.user.id,
+                u.username,
+                ud.firstname,
+                ud.lastname,
+                m.createTime
+            )
+            FROM Models m
+            LEFT JOIN Users u
+            ON u.id = m.user.id
+            LEFT JOIN UserDetails ud
+            ON ud.id = u.userDetail.id
+            LEFT JOIN Ratings r
+            ON m.id = r.model.id
+            WHERE m.name LIKE :name
+            OR m.type LIKE :type
+            OR m.description LIKE :description
+            GROUP BY m.id
             """, ModelDto.class)
         .setParameter("name", "%" + keyword + "%")
         .setParameter("type", "%" + keyword + "%")
