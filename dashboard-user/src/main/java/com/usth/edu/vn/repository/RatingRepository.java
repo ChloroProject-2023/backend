@@ -35,9 +35,10 @@ public class RatingRepository implements PanacheRepository<Ratings> {
             r.comment,
             u.id,
             u.username,
-            ud.lastname,
             ud.firstname,
-            m.id
+            ud.lastname,
+            m.id,
+            r.createTime
         )
         FROM Ratings r
         INNER JOIN Users u
@@ -58,9 +59,10 @@ public class RatingRepository implements PanacheRepository<Ratings> {
             r.comment,
             u.id,
             u.username,
-            ud.lastname,
             ud.firstname,
-            m.id
+            ud.lastname,
+            m.id,
+            r.createTime
         )
         FROM Ratings r
         INNER JOIN Users u
@@ -83,9 +85,10 @@ public class RatingRepository implements PanacheRepository<Ratings> {
             r.comment,
             u.id,
             u.username,
-            ud.lastname,
             ud.firstname,
-            m.id
+            ud.lastname,
+            m.id,
+            r.createTime
         )
         FROM Ratings r
         INNER JOIN Users u
@@ -108,9 +111,10 @@ public class RatingRepository implements PanacheRepository<Ratings> {
             r.comment,
             u.id,
             u.username,
-            ud.lastname,
             ud.firstname,
-            m.id
+            ud.lastname,
+            m.id,
+            r.createTime
         )
         FROM Ratings r
         INNER JOIN Users u

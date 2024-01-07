@@ -106,7 +106,7 @@ public class UserRepository implements PanacheRepository<Users> {
         .getResultList();
   }
 
-  public List<UserDto> findPagingUsers(int pageNo) {
+  public List<UserDto> findPagingUsers(int pageNo, int pageSize) {
     return entityManager
         .createQuery("""
             SELECT NEW com.usth.edu.vn.model.dto.UserDto(
@@ -124,8 +124,8 @@ public class UserRepository implements PanacheRepository<Users> {
             ON u.id = ud.user.id
             """,
             UserDto.class)
-        .setFirstResult((pageNo - 1) * PAGE_SIZE)
-        .setMaxResults(PAGE_SIZE)
+        .setFirstResult((pageNo - 1) * pageSize)
+        .setMaxResults(pageSize)
         .getResultList();
   }
 
