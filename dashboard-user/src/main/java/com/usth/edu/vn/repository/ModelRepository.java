@@ -178,9 +178,10 @@ public class ModelRepository implements PanacheRepository<Models> {
       model.setFilepath(o[3].toString());
       model.setDescription(o[4].toString());
       model.setUser_id(Long.parseLong(o[5].toString()));
-      model.setFirstname(o[6].toString());
-      model.setLastname(o[7].toString());
-      model.setCreateTime((Date) o[8]);
+      model.setUsername(o[6].toString());
+      model.setFirstname(o[7].toString());
+      model.setLastname(o[8].toString());
+      model.setCreateTime((Date) o[9]);
       allModels.add(model);
     }
     return allModels;
