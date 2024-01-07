@@ -23,6 +23,8 @@ public class ModelDto {
 
   private long user_id;
 
+  private String username;
+
   private String firstname;
 
   private String lastname;
