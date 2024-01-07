@@ -8,19 +8,19 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class InferenceDto {
-  private long id;
+  private Long id;
 
   private String result;
 
-  private long user_id;
+  private Long user_id;
 
   private String firstname;
 
   private String lastname;
 
-  private long model_id;
+  private Long model_id;
 
-  private long resource_id;
+  private Long resource_id;
 
   private Date createTime;
 }

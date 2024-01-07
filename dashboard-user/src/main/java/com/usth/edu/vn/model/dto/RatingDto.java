@@ -1,5 +1,7 @@
 package com.usth.edu.vn.model.dto;
 
+import java.util.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -7,13 +9,13 @@ import lombok.Data;
 @AllArgsConstructor
 public class RatingDto {
 
-  private long id;
+  private Long id;
 
   private Integer stars;
 
   private String comment;
 
-  private long user_id;
+  private Long user_id;
 
   private String username;
 
@@ -21,5 +23,7 @@ public class RatingDto {
 
   private String firstname;
 
-  private long model_id;
+  private Long model_id;
+
+  private Date createTime;
 }

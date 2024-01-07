@@ -9,13 +9,13 @@ import lombok.Data;
 @AllArgsConstructor
 public class ResourceDto {
 
-  private long id;
+  private Long id;
 
   private String filepath;
 
   private String type;
 
-  private long user_id;
+  private Long user_id;
 
   private String firstname;
 
