@@ -50,7 +50,7 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.filepath,
                   m.description,
                   m.user.id,
-                  m.user.username,
+                  u.username,
                   ud.firstname,
                   ud.lastname,
                   m.createTime
@@ -76,7 +76,7 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.filepath,
                   m.description,
                   m.user.id,
-                  m.user.username,
+                  u.username,
                   ud.firstname,
                   ud.lastname,
                   m.createTime
@@ -102,7 +102,7 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.filepath,
                   m.description,
                   m.user.id,
-                  m.user.username,
+                  u.username,
                   ud.firstname,
                   ud.lastname,
                   m.createTime
@@ -126,7 +126,7 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.filepath,
                   m.description,
                   m.user.id,
-                  m.user.username,
+                  u.username,
                   ud.firstname,
                   ud.lastname,
                   m.createTime
@@ -151,7 +151,7 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.filepath,
                   m.description,
                   m.user_id,
-                  m.user.username,
+                  u.username,
                   ud.firstname,
                   ud.lastname,
                   m.createTime
@@ -196,6 +196,7 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.filepath,
                   m.description,
                   m.user.id,
+                  u.username,
                   ud.firstname,
                   ud.lastname,
                   m.createTime
@@ -221,7 +222,7 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.filepath,
                   m.description,
                   m.user.id,
-                  m.user.username,
+                  u.username,
                   ud.firstname,
                   ud.lastname,
                   m.createTime
