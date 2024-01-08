@@ -136,7 +136,7 @@ public class ModelRepository implements PanacheRepository<Models> {
         .getResultList();
   }
 
-  public List<ModelDto> findTopTenRecentlyUsedModels() {
+  public List<ModelDto> findTopTenRecentlyCreatedModels() {
     return entityManager
         .createQuery("""
             SELECT new com.usth.edu.vn.model.dto.ModelDto(
@@ -207,22 +207,55 @@ public class ModelRepository implements PanacheRepository<Models> {
     List<Object[]> result = (List<Object[]>) query.getResultList();
     List<ModelDto> allModels = new ArrayList<>(result.size());
     for (Object[] o : result) {
-      ModelDto model = new ModelDto();
-      model.setId(Long.parseLong(o[0].toString()));
-      model.setName(o[1].toString());
-      model.setType(o[2].toString());
-      model.setFilepath(o[3].toString());
-      model.setDescription(o[4].toString());
-      model.setStars(Double.parseDouble(o[5].toString()));
-      model.setUsageCount(Long.parseLong(o[6].toString()));
-      model.setUser_id(Long.parseLong(o[7].toString()));
-      model.setUsername(o[8].toString());
-      model.setFirstname(o[9].toString());
-      model.setLastname(o[10].toString());
-      model.setCreateTime((Date) o[11]);
-      allModels.add(model);
+      ModelDto modelDto = new ModelDto();
+      modelDto.setId(Long.parseLong(o[0].toString()));
+      modelDto.setName(o[1].toString());
+      modelDto.setType(o[2].toString());
+      modelDto.setFilepath(o[3].toString());
+      modelDto.setDescription(o[4].toString());
+      modelDto.setStars(o[5] == null ? null : Double.parseDouble(o[5].toString()));
+      modelDto.setUsageCount(o[6] == null ? 0 : Long.parseLong(o[6].toString()));
+      modelDto.setUser_id(Long.parseLong(o[7].toString()));
+      modelDto.setUsername(o[8].toString());
+      modelDto.setFirstname(o[9].toString());
+      modelDto.setLastname(o[10].toString());
+      modelDto.setCreateTime((Date) o[11]);
+      allModels.add(modelDto);
     }
     return allModels;
+  }
+
+  public List<ModelDto> findTop10BestRatingModels() {
+    return entityManager
+        .createQuery("""
+            SELECT new com.usth.edu.vn.model.dto.ModelDto(
+                  m.id,
+                  m.name,
+                  m.type,
+                  m.filepath,
+                  m.description,
+                  AVG(r.stars),
+                  COUNT(DISTINCT i.id),
+                  m.user.id,
+                  u.username,
+                  ud.firstname,
+                  ud.lastname,
+                  m.createTime
+            )
+            FROM Models m
+            LEFT JOIN Users u
+            ON u.id = m.user.id
+            LEFT JOIN UserDetails ud
+            ON ud.id = u.userDetail.id
+            LEFT JOIN Ratings r
+            ON m.id = r.model.id
+            LEFT JOIN Inferences i
+            ON m.id = i.model.id
+            GROUP BY m.id
+            ORDER BY AVG(r.stars) DESC
+            LIMIT 10
+            """, ModelDto.class)
+        .getResultList();
   }
 
   public List<ModelDto> findPagingModels(int pageNo, int pageSize) {

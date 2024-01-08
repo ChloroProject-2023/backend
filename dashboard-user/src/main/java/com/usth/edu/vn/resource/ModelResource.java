@@ -5,9 +5,7 @@ import java.util.List;
 
 import com.usth.edu.vn.exception.CustomException;
 import com.usth.edu.vn.model.Models;
-import com.usth.edu.vn.model.Ratings;
 import com.usth.edu.vn.model.dto.ModelDto;
-import com.usth.edu.vn.model.dto.RatingDto;
 import com.usth.edu.vn.repository.ModelRepository;
 import com.usth.edu.vn.repository.RatingRepository;
 
@@ -33,7 +31,6 @@ public class ModelResource {
   @Inject
   RatingRepository ratingRepository;
 
-  // Model endpoints
   @GET
   @Path("/")
   @RolesAllowed({ "admin", "user" })
@@ -83,8 +80,8 @@ public class ModelResource {
   @GET
   @Path("/top10-recently-use")
   @RolesAllowed({ "admin", "user" })
-  public Response getTopTenRecentlyUsedModels() {
-    List<ModelDto> top10Models = modelRepository.findTopTenRecentlyUsedModels();
+  public Response getTopTenRecentlyCreatedModels() {
+    List<ModelDto> top10Models = modelRepository.findTopTenRecentlyCreatedModels();
     return Response.ok(top10Models).build();
   }
 
@@ -93,6 +90,14 @@ public class ModelResource {
   @RolesAllowed({ "admin", "user" })
   public Response getTopTenMostUsedModels() {
     List<ModelDto> top10Models = modelRepository.findTopTenMostUsedModels();
+    return Response.ok(top10Models).build();
+  }
+
+  @GET
+  @Path("/top10-best-rating")
+  @RolesAllowed({ "admin", "user" })
+  public Response getTopTenBestRatingModels() {
+    List<ModelDto> top10Models = modelRepository.findTop10BestRatingModels();
     return Response.ok(top10Models).build();
   }
 
@@ -132,74 +137,5 @@ public class ModelResource {
   public Response deleteModel(long id) {
     modelRepository.deleteModel(id);
     return Response.ok("Model" + id + " is deleted!").build();
-  }
-
-  // Ratings endpoints
-  @GET
-  @Path("/ratings")
-  @RolesAllowed({ "admin", "user" })
-  public Response getAllRatings() {
-    List<RatingDto> allRatings = ratingRepository.findAllRatings();
-    return Response.ok(allRatings).build();
-  }
-
-  @GET
-  @Path("/ratings-by-id/{id}")
-  @RolesAllowed({ "admin", "user" })
-  public Response getRatingById(long id) {
-    RatingDto rating = ratingRepository.findRatingById(id);
-    return Response.ok(rating).build();
-  }
-
-  @GET
-  @Path("/ratings-by-model_id/{model_id}")
-  @RolesAllowed({ "admin", "user" })
-  public Response getRatingsByModelId(long model_id) {
-    List<RatingDto> allRatings = ratingRepository.findRatingByModelId(model_id);
-    return Response.ok(allRatings).build();
-  }
-
-  @GET
-  @Path("/ratings-by-user_id/{user_id}")
-  @RolesAllowed({ "admin", "user" })
-  public Response getRatingsByUserId(long user_id) {
-    List<RatingDto> allRatings = ratingRepository.findRatingByUserId(user_id);
-    return Response.ok(allRatings).build();
-  }
-
-  @POST
-  @Path("/ratings/create")
-  @RolesAllowed({ "admin", "user" })
-  @Transactional
-  public Response createRating(
-      @QueryParam("user_id") long user_id,
-      @QueryParam("model_id") long model_id,
-      Ratings rating) throws CustomException {
-    ratingRepository.addRating(user_id, model_id, rating);
-    return Response.created(URI.create("/user/" + user_id + "/model/" + model_id + "/new-rating/" + rating.getId()))
-        .build();
-  }
-
-  @PUT
-  @Path("/ratings/update")
-  @RolesAllowed({ "admin", "user" })
-  @Transactional
-  public Response updateRating(
-      @QueryParam("user_id") long user_id,
-      @QueryParam("model_id") long model_id,
-      Ratings rating) throws CustomException {
-    ratingRepository.updateRating(user_id, model_id, rating);
-    return Response.created(URI.create("/user/" + user_id + "/model/" + model_id + "/rating-update/" + rating.getId()))
-        .entity(rating)
-        .build();
-  }
-
-  @DELETE
-  @Path("/ratings/delete/{id}")
-  @RolesAllowed({ "admin", "user" })
-  @Transactional
-  public Response deleteRating(long id) {
-    ratingRepository.deleteRating(id);
-    return Response.ok("Rating " + id + " is deleted!").build();
   }
 }
