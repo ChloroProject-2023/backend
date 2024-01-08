@@ -50,6 +50,7 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.filepath,
                   m.description,
                   AVG(r.stars),
+                  COUNT(DISTINCT i.id),
                   m.user.id,
                   u.username,
                   ud.firstname,
@@ -64,6 +65,7 @@ public class ModelRepository implements PanacheRepository<Models> {
             LEFT JOIN Ratings r
             ON m.id = r.model.id
             LEFT JOIN Inferences i
+            ON m.id = i.model.id
             WHERE m.id = :id
             """, ModelDto.class)
         .setParameter("id", id)
@@ -80,6 +82,7 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.filepath,
                   m.description,
                   AVG(r.stars),
+                  COUNT(DISTINCT i.id),
                   m.user.id,
                   u.username,
                   ud.firstname,
@@ -93,6 +96,8 @@ public class ModelRepository implements PanacheRepository<Models> {
             ON ud.id = u.userDetail.id
             LEFT JOIN Ratings r
             ON m.id = r.model.id
+            LEFT JOIN Inferences i
+            ON m.id = i.model.id
             WHERE u.id = :user_id
             GROUP BY m.id
             """, ModelDto.class)
@@ -104,17 +109,18 @@ public class ModelRepository implements PanacheRepository<Models> {
     return entityManager
         .createQuery("""
             SELECT new com.usth.edu.vn.model.dto.ModelDto(
-                  m.id,
-                  m.name,
-                  m.type,
-                  m.filepath,
-                  m.description,
-                  AVG(r.stars),
-                  m.user.id,
-                  u.username,
-                  ud.firstname,
-                  ud.lastname,
-                  m.createTime
+                m.id,
+                m.name,
+                m.type,
+                m.filepath,
+                m.description,
+                AVG(r.stars),
+                COUNT(DISTINCT i.id),
+                m.user.id,
+                u.username,
+                ud.firstname,
+                ud.lastname,
+                m.createTime
             )
             FROM Models m
             LEFT JOIN Users u
@@ -123,6 +129,8 @@ public class ModelRepository implements PanacheRepository<Models> {
             ON ud.id = u.userDetail.id
             LEFT JOIN Ratings r
             ON m.id = r.model.id
+            LEFT JOIN Inferences i
+            ON m.id = i.model.id
             GROUP BY m.id
             """, ModelDto.class)
         .getResultList();
@@ -138,6 +146,7 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.filepath,
                   m.description,
                   AVG(r.stars),
+                  COUNT(DISTINCT i.id),
                   m.user.id,
                   u.username,
                   ud.firstname,
@@ -151,6 +160,8 @@ public class ModelRepository implements PanacheRepository<Models> {
             ON ud.id = u.userDetail.id
             LEFT JOIN Ratings r
             ON m.id = r.model.id
+            LEFT JOIN Inferences i
+            ON m.id = i.model.id
             GROUP BY m.id
             ORDER BY m.createTime DESC
             LIMIT 10
@@ -168,6 +179,7 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.filepath,
                   m.description,
                   AVG(r.stars),
+                  new_i.inference_count,
                   m.user_id,
                   u.username,
                   ud.firstname,
@@ -179,11 +191,13 @@ public class ModelRepository implements PanacheRepository<Models> {
             LEFT JOIN user_details ud
             ON ud.user_id = u.id
             LEFT JOIN (
-            SELECT model_id
-            FROM inferences
-            GROUP BY model_id
-            ORDER BY COUNT(*) DESC)
-            AS new_i
+                SELECT
+                    i.model_id,
+                    COUNT(DISTINCT(i.id)) as inference_count
+                FROM inferences i
+                GROUP BY model_id
+                ORDER BY COUNT(*) DESC)
+                AS new_i
             ON new_i.model_id = m.id
             LEFT JOIN ratings r
             ON m.id = r.model_id
@@ -200,11 +214,12 @@ public class ModelRepository implements PanacheRepository<Models> {
       model.setFilepath(o[3].toString());
       model.setDescription(o[4].toString());
       model.setStars(Double.parseDouble(o[5].toString()));
-      model.setUser_id(Long.parseLong(o[6].toString()));
-      model.setUsername(o[7].toString());
-      model.setFirstname(o[8].toString());
-      model.setLastname(o[9].toString());
-      model.setCreateTime((Date) o[10]);
+      model.setUsageCount(Long.parseLong(o[6].toString()));
+      model.setUser_id(Long.parseLong(o[7].toString()));
+      model.setUsername(o[8].toString());
+      model.setFirstname(o[9].toString());
+      model.setLastname(o[10].toString());
+      model.setCreateTime((Date) o[11]);
       allModels.add(model);
     }
     return allModels;
@@ -220,6 +235,7 @@ public class ModelRepository implements PanacheRepository<Models> {
                   m.filepath,
                   m.description,
                   AVG(r.stars),
+                  COUNT(DISTINCT i.id),
                   m.user.id,
                   u.username,
                   ud.firstname,
@@ -233,6 +249,8 @@ public class ModelRepository implements PanacheRepository<Models> {
             ON ud.id = u.userDetail.id
             LEFT JOIN Ratings r
             ON m.id = r.model.id
+            LEFT JOIN Inferences i
+            ON m.id = i.model.id
             GROUP BY m.id
             """, ModelDto.class)
         .setFirstResult((pageNo - 1) * pageSize)
@@ -250,6 +268,7 @@ public class ModelRepository implements PanacheRepository<Models> {
                 m.filepath,
                 m.description,
                 AVG(r.stars),
+                COUNT(DISTINCT i.id),
                 m.user.id,
                 u.username,
                 ud.firstname,
@@ -263,6 +282,8 @@ public class ModelRepository implements PanacheRepository<Models> {
             ON ud.id = u.userDetail.id
             LEFT JOIN Ratings r
             ON m.id = r.model.id
+            LEFT JOIN Inferences i
+            ON m.id = i.model.id
             WHERE m.name LIKE :name
             OR m.type LIKE :type
             OR m.description LIKE :description

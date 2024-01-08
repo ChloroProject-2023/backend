@@ -23,6 +23,8 @@ public class ModelDto {
 
   private Double stars;
 
+  private Long usageCount;
+
   private Long user_id;
 
   private String username;
@@ -32,6 +34,4 @@ public class ModelDto {
   private String lastname;
 
   private Date createTime;
-
-  private Integer usageCount;
 }
