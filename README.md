@@ -3,6 +3,7 @@
 Web application for project
 
 - [Đoàn Đình Đăng](https://github.com/dangdd2003) (Backend - Server-side)
+- [Bùi Huy Hoàng](https://github.com/bhhoang) (Backend)
 - [Mai Hải Đăng](https://github.com/Vivarium69420) (Frontend API Handling - Client-side)
 - [Trần Hải Đăng](https://github.com/thdgg) (Frontend UI)
 
