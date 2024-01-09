@@ -48,7 +48,7 @@ public class UserResource {
     }
 
     @GET
-    @Path("/paging/{pageNo}")
+    @Path("/paging")
     @RolesAllowed({"admin", "user"})
     public Response getAllUsers(@QueryParam("pageNo") int pageNo, @QueryParam("pageSize") int pageSize) {
         List<UserDto> allUsers = userRepository.findPagingUsers(pageNo, pageSize);
@@ -59,9 +59,9 @@ public class UserResource {
     }
 
     @GET
-    @Path("/search/{keyword}")
+    @Path("/search")
     @RolesAllowed({"admin", "user"})
-    public Response getSearchUsers( String keyword) {
+    public Response getSearchUsers(@QueryParam("keyword") String keyword) {
         List<UserDto> anyUsers = userRepository.findMatchedUsers(keyword);
         if (anyUsers.isEmpty()) {
             return Response.status(NOT_FOUND).build();
