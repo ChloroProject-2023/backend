@@ -54,3 +54,18 @@
 - **User service:**
   - **service**: finish CRUD for resources and inference (state or result of running models).
   - **endpoint:** finish basic CRUD endpoint for all entities.
+
+## Sat, 6, Jan/2024
+
+- **User service:**
+  - **service & endpoint**: add top 10 queries.
+
+## Sun, 7, Jan/2024
+
+- **User service:**
+  - **service:** add models' average stars to APIs.
+
+### Feature
+
+- **File service:**
+  - **service & endpoint:** initialize upload file feature (still testing and optimizing)
