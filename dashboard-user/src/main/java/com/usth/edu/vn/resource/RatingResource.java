@@ -8,6 +8,7 @@ import com.usth.edu.vn.model.Ratings;
 import com.usth.edu.vn.model.dto.RatingDto;
 import com.usth.edu.vn.repository.RatingRepository;
 
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -27,7 +28,7 @@ public class RatingResource {
 
   @GET
   @Path("/ratings")
-  @RolesAllowed({ "admin", "user" })
+  @PermitAll
   public Response getAllRatings() {
     List<RatingDto> allRatings = ratingRepository.findAllRatings();
     return Response.ok(allRatings).build();
@@ -35,7 +36,7 @@ public class RatingResource {
 
   @GET
   @Path("/ratings-by-id/{id}")
-  @RolesAllowed({ "admin", "user" })
+  @PermitAll
   public Response getRatingById(long id) {
     RatingDto rating = ratingRepository.findRatingById(id);
     return Response.ok(rating).build();
@@ -43,7 +44,7 @@ public class RatingResource {
 
   @GET
   @Path("/ratings-by-model_id/{model_id}")
-  @RolesAllowed({ "admin", "user" })
+  @PermitAll
   public Response getRatingsByModelId(long model_id) {
     List<RatingDto> allRatings = ratingRepository.findRatingByModelId(model_id);
     return Response.ok(allRatings).build();
@@ -51,7 +52,7 @@ public class RatingResource {
 
   @GET
   @Path("/ratings-by-user_id/{user_id}")
-  @RolesAllowed({ "admin", "user" })
+  @PermitAll
   public Response getRatingsByUserId(long user_id) {
     List<RatingDto> allRatings = ratingRepository.findRatingByUserId(user_id);
     return Response.ok(allRatings).build();
