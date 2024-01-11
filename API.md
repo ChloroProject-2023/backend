@@ -69,7 +69,7 @@
 
 - **POST:** `/users/create`
 
-  - Role Allowed: _admin, user_
+  - Permit All
   - Request Body:
 
   ```json
@@ -140,7 +140,7 @@
 }
 ```
 
-- **_Reponse Body (LIst)_**
+- **_Response Body (List)_**
 
   ```json
   [
