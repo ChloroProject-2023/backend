@@ -3,7 +3,10 @@ package com.usth.edu.vn.resource;
 import com.usth.edu.vn.exception.CustomException;
 import com.usth.edu.vn.model.Users;
 import com.usth.edu.vn.model.dto.UserDto;
+import com.usth.edu.vn.repository.ResourceRepository;
 import com.usth.edu.vn.repository.UserRepository;
+import com.usth.edu.vn.services.FileServices;
+
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -28,6 +31,9 @@ public class UserResource {
 
     @Inject
     UserRepository userRepository;
+
+    @Inject
+    FileServices fileServices;
 
     @GET
     @Path("{id}")
@@ -96,6 +102,7 @@ public class UserResource {
     public Response createUser(Users user) throws CustomException {
         userRepository.addUser(user);
         if (userRepository.isPersistent(user)) {
+            fileServices.createUserDir(user.getId());
             return Response.created(URI.create("/new-user/" + user.getId())).entity(user).build();
         }
         return Response.status(BAD_REQUEST).build();
@@ -124,6 +131,7 @@ public class UserResource {
     @Transactional
     @RolesAllowed({"admin", "user"})
     public Response deleteUser(@QueryParam("username") String username) throws CustomException {
+        fileServices.deleteUserDir(username);
         userRepository.deleteUser(username);
         return Response.ok("User " + username +" is deleted!").build();
     }
@@ -133,6 +141,7 @@ public class UserResource {
     @Transactional
     @RolesAllowed({"admin", "user"})
     public Response deleteUser(@PathParam("id") long id) throws CustomException {
+        fileServices.deleteUserDir(id);
         userRepository.deleteUser(id);
         return Response.ok("User " + id +" is deleted!").build();
     }

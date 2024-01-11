@@ -58,35 +58,35 @@ public class Resource {
     return Response.ok(count).build();
   }
 
-  @POST
-  @Path("/create")
-  @RolesAllowed({ "admin", "user" })
-  @Transactional
-  public Response createResource(@QueryParam("user_id") long user_id, Resources resource) {
-    resourceRepository.addResource(user_id, resource);
-    if (resourceRepository.isPersistent(resource)) {
-      return Response.created(URI.create("/user/" + user_id + "/new-resource/" + resource.getId())).build();
-    } else {
-      return Response.status(BAD_REQUEST).build();
-    }
-  }
+  // @POST
+  // @Path("/create")
+  // @RolesAllowed({ "admin", "user" })
+  // @Transactional
+  // public Response createResource(@QueryParam("user_id") long user_id, Resources resource) {
+  //   resourceRepository.addResource(user_id, resource);
+  //   if (resourceRepository.isPersistent(resource)) {
+  //     return Response.created(URI.create("/user/" + user_id + "/new-resource/" + resource.getId())).build();
+  //   } else {
+  //     return Response.status(BAD_REQUEST).build();
+  //   }
+  // }
 
-  @PUT
-  @Path("/update")
-  @RolesAllowed({ "admin", "user" })
-  @Transactional
-  public Response updateResource(@QueryParam("id") long id, Resources resource) throws CustomException {
-    resourceRepository.updateResource(id, resource);
-    return Response.created(URI.create("/user/" + id + "/resource-update/" + resource.getId())).entity(resource)
-        .build();
-  }
+  // @PUT
+  // @Path("/update")
+  // @RolesAllowed({ "admin", "user" })
+  // @Transactional
+  // public Response updateResource(@QueryParam("id") long id, Resources resource) throws CustomException {
+  //   resourceRepository.updateResource(id, resource);
+  //   return Response.created(URI.create("/user/" + id + "/resource-update/" + resource.getId())).entity(resource)
+  //       .build();
+  // }
 
-  @DELETE
-  @Path("/delete/{id}")
-  @RolesAllowed({ "admin", "user" })
-  @Transactional
-  public Response deleteResource(long id) {
-    resourceRepository.deleteResource(id);
-    return Response.ok("Resource " + id + " is deleted!").build();
-  }
+  // @DELETE
+  // @Path("/delete/{id}")
+  // @RolesAllowed({ "admin", "user" })
+  // @Transactional
+  // public Response deleteResource(long id) {
+  //   resourceRepository.deleteResource(id);
+  //   return Response.ok("Resource " + id + " is deleted!").build();
+  // }
 }
