@@ -55,8 +55,7 @@ public class FileResource {
   @Produces(MediaType.TEXT_PLAIN)
   public Response getAvatar(@QueryParam("id") long user_id) {
     String imageSource = fileServices.getAvatar(user_id);
-    String avatarUrl = "146.190.100.81:3000" + user_id + File. + AVATARS + 
-    return Response.ok()
+    return Response.ok(imageSource).build();
   }
 
   @DELETE
