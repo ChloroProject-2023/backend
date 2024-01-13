@@ -6,15 +6,17 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
+import org.jboss.resteasy.reactive.RestForm;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 
+import com.usth.edu.vn.exception.CustomException;
 import com.usth.edu.vn.services.FileServices;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.validation.ReportAsSingleViolation;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -31,7 +33,9 @@ public class FileResource {
   @POST
   @Path("/upload-avatar")
   @PermitAll
-  public Response uploadAvatar(@QueryParam("user_id") long user_id, MultipartFormDataInput input) throws IOException {
+  public Response uploadAvatar(@QueryParam("user_id") long user_id, @RestForm("image") FileUpload input)
+      throws IOException {
+    fileServices.deleteDir(user_id, AVATARS);
     return Response.ok(fileServices.uploadFile(user_id, input, AVATARS)).build();
   }
 
@@ -52,17 +56,16 @@ public class FileResource {
   @GET
   @Path("/get-avatar")
   @PermitAll
-  @Produces(MediaType.TEXT_PLAIN)
-  public Response getAvatar(@QueryParam("id") long user_id) {
-    String imageSource = fileServices.getAvatar(user_id);
-    return Response.ok(imageSource).build();
+  @Produces("image/png")
+  public Response getAvatar(@QueryParam("id") long user_id) throws IOException, CustomException {
+    return Response.ok(fileServices.getAvatar(user_id)).build();
   }
 
   @DELETE
   @Path("/delete-avatar")
   @PermitAll
   public Response deleteAvatar(@QueryParam("id") long user_id) {
-    fileServices.deleteAvatar(user_id);
+    fileServices.deleteDir(user_id, AVATARS);
     return Response.ok().build();
   }
 }
