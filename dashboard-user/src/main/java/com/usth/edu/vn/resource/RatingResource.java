@@ -27,7 +27,7 @@ public class RatingResource {
   RatingRepository ratingRepository;
 
   @GET
-  @Path("/ratings")
+  @Path("/")
   @PermitAll
   public Response getAllRatings() {
     List<RatingDto> allRatings = ratingRepository.findAllRatings();
@@ -35,7 +35,7 @@ public class RatingResource {
   }
 
   @GET
-  @Path("/ratings-by-id/{id}")
+  @Path("/{id}")
   @PermitAll
   public Response getRatingById(long id) {
     RatingDto rating = ratingRepository.findRatingById(id);
@@ -43,7 +43,7 @@ public class RatingResource {
   }
 
   @GET
-  @Path("/ratings-by-model_id/{model_id}")
+  @Path("/model_id/{model_id}")
   @PermitAll
   public Response getRatingsByModelId(long model_id) {
     List<RatingDto> allRatings = ratingRepository.findRatingByModelId(model_id);
@@ -51,7 +51,7 @@ public class RatingResource {
   }
 
   @GET
-  @Path("/ratings-by-user_id/{user_id}")
+  @Path("/user_id/{user_id}")
   @PermitAll
   public Response getRatingsByUserId(long user_id) {
     List<RatingDto> allRatings = ratingRepository.findRatingByUserId(user_id);
@@ -59,7 +59,7 @@ public class RatingResource {
   }
 
   @POST
-  @Path("/ratings/create")
+  @Path("/create")
   @RolesAllowed({ "admin", "user" })
   @Transactional
   public Response createRating(
@@ -72,7 +72,7 @@ public class RatingResource {
   }
 
   @PUT
-  @Path("/ratings/update")
+  @Path("/update")
   @RolesAllowed({ "admin", "user" })
   @Transactional
   public Response updateRating(
@@ -86,7 +86,7 @@ public class RatingResource {
   }
 
   @DELETE
-  @Path("/ratings/delete/{id}")
+  @Path("/delete/{id}")
   @RolesAllowed({ "admin", "user" })
   @Transactional
   public Response deleteRating(long id) {

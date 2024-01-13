@@ -32,6 +32,14 @@ public class InferenceResource {
   }
 
   @GET
+  @Path("/{id}")
+  @RolesAllowed({ "admin", "user" })
+  public Response getInferenceById(long id) {
+    InferenceDto inference = inferenceRepository.findInferenceById(id);
+    return Response.ok(inference).build();
+  }
+
+  @GET
   @Path("/by-user/{user_id}")
   @RolesAllowed({ "admin", "user" })
   public Response getAllInferencesByUserId(long user_id) {
