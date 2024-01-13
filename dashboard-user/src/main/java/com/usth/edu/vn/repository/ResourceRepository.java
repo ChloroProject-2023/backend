@@ -45,7 +45,7 @@ public class ResourceRepository implements PanacheRepository<Resources> {
         .getSingleResult();
   }
 
-  public ResourceDto findResourceByUserId(long user_id) {
+  public List<ResourceDto> findResourceByUserId(long user_id) {
     return entityManager.createQuery("""
         SELECT NEW com.usth.edu.vn.model.dto.ResourceDto(
             r.id,
@@ -64,7 +64,7 @@ public class ResourceRepository implements PanacheRepository<Resources> {
         WHERE u.id = :id
         """, ResourceDto.class)
         .setParameter("id", user_id)
-        .getSingleResult();
+        .getResultList();
   }
 
   public List<ResourceDto> findAllResources() {
@@ -95,11 +95,11 @@ public class ResourceRepository implements PanacheRepository<Resources> {
   }
 
   public void updateResource(long id, Resources resource) throws CustomException {
-    findByIdOptional(id).map(r -> {
-      r.setFilepath(resource.getFilepath());
-      r.setType(resource.getType());
-      return r;
-    });
+    // findByIdOptional(id).map(r -> {
+    //   r.setFilepath(resource.getFilepath());
+    //   r.setType(resource.getType());
+    //   return r;
+    // });
     Optional<Resources> existedResource = findByIdOptional(id);
     if (existedResource.isEmpty()) {
       throw new CustomException("Resource does not existed!");

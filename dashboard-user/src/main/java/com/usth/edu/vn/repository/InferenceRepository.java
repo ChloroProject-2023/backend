@@ -42,13 +42,13 @@ public class InferenceRepository implements PanacheRepository<Inferences> {
             i.createTime
         )
         FROM Inferences i
-        INNER JOIN Users u
+        LEFT JOIN Users u
         ON u.id = i.user.id
-        INNER JOIN UserDetails ud
+        LEFT JOIN UserDetails ud
         ON ud.id = u.userDetail.id
-        INNER JOIN Models m
+        LEFT JOIN Models m
         ON m.id = i.model.id
-        INNER JOIN Resources r
+        LEFT JOIN Resources r
         ON r.id = i.resource.id
         WHERE i.id = :id
         """, InferenceDto.class)
@@ -69,13 +69,13 @@ public class InferenceRepository implements PanacheRepository<Inferences> {
             i.createTime
         )
         FROM Inferences i
-        INNER JOIN Users u
-      ON u.id = i.user.id
-      INNER JOIN UserDetails ud
+        LEFT JOIN Users u
+        ON u.id = i.user.id
+        LEFT JOIN UserDetails ud
         ON ud.id = u.userDetail.id
-        INNER JOIN Models m
+        LEFT JOIN Models m
         ON m.id = i.model.id
-        INNER JOIN Resources r
+        LEFT JOIN Resources r
         ON r.id = i.resource.id
         """, InferenceDto.class)
         .getResultList();
@@ -94,13 +94,13 @@ public class InferenceRepository implements PanacheRepository<Inferences> {
             i.createTime
         )
         FROM Inferences i
-        INNER JOIN Users u
+        LEFT JOIN Users u
         ON u.id = i.user.id
-        INNER JOIN UserDetails ud
+        LEFT JOIN UserDetails ud
         ON ud.id = u.userDetail.id
-        INNER JOIN Models m
+        LEFT JOIN Models m
         ON m.id = i.model.id
-        INNER JOIN Resources r
+        LEFT JOIN Resources r
         ON r.id = i.resource.id
         WHERE u.id = :id
         """, InferenceDto.class)
@@ -121,13 +121,13 @@ public class InferenceRepository implements PanacheRepository<Inferences> {
             i.createTime
         )
         FROM Inferences i
-        INNER JOIN Users u
+        LEFT JOIN Users u
         ON u.id = i.user.id
-        INNER JOIN UserDetails ud
+        LEFT JOIN UserDetails ud
         ON ud.id = u.userDetail.id
-        INNER JOIN Models m
+        LEFT JOIN Models m
         ON m.id = i.model.id
-        INNER JOIN Resources r
+        LEFT JOIN Resources r
         ON r.id = i.resource.id
         WHERE m.id = :id
         """, InferenceDto.class)
