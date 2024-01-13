@@ -6,6 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
@@ -13,9 +16,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 import org.jboss.resteasy.reactive.server.multipart.FormValue;
 import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 
+import com.usth.edu.vn.exception.CustomException;
 import com.usth.edu.vn.model.Resources;
 import com.usth.edu.vn.model.Users;
 import com.usth.edu.vn.repository.ResourceRepository;
@@ -37,7 +42,7 @@ public class FileServices {
   @Inject
   ResourceRepository resourceRepository;
 
-  public List<Item> uploadFile(long user_id, MultipartFormDataInput input, String foldername) throws IOException {
+  public List<Item> uploadFile(long user_id, MultipartFormDataInput input, String folder) throws IOException {
     Map<String, Collection<FormValue>> map = input.getValues();
     List<Item> items = new ArrayList<>();
     for (var entry : map.entrySet()) {
@@ -50,31 +55,32 @@ public class FileServices {
             value.isFileItem(),
             value.getHeaders()));
         InputStream inputStream = value.getFileItem().getInputStream();
-        writeFile(user_id, inputStream, foldername, value.getFileName());
+        writeFile(user_id, inputStream, folder, value.getFileName());
       }
     }
     return items;
   }
 
-  public String getAvatar(long user_id) {
-    File avatarDir = new File("GroupProject" + File.separator + user_id + File.separator + AVATARS);
-    if (avatarDir.listFiles().length == 0) {
-      return "No Avatar!";
-    } else {
-      // FileInputStream inputStream = new FileInputStream(avatarDir.getPath() +
-      // File.separator + avatarDir.list()[0]);
-      // byte[] imageData = inputStream.readAllBytes();
-      // inputStream.close();
-      // String base64Image = Base64.getEncoder().encodeToString(imageData);
-      return avatarDir.listFiles()[0].getAbsolutePath();
-    }
+  public String uploadFile(long user_id, FileUpload input, String folder) throws IOException {
+    Path file = input.uploadedFile();
+    byte[] data = Files.readAllBytes(file);
+    Path writeDir = Paths
+        .get("GroupProject" + File.separator + user_id + File.separator + folder + File.separator + input.fileName());
+    Files.write(writeDir, data);
+    System.out.println(writeDir.toAbsolutePath().toString());
+    return writeDir.toAbsolutePath().toString();
   }
 
-  public void deleteAvatar(long user_id) {
-    File userAvatarDir = new File("GroupProject" + File.separator + user_id + File.separator + AVATARS);
-    File[] allFiles = userAvatarDir.listFiles();
-    for (File file : allFiles) {
-      deleteDir(file);
+  public byte[] getAvatar(long user_id) throws IOException, CustomException {
+    File avatarDir = new File("GroupProject" + File.separator + user_id + File.separator + AVATARS);
+    if (avatarDir.listFiles().length == 0) {
+      throw new CustomException("No avatar uploaded!");
+    } else {
+      FileInputStream inputStream = new FileInputStream(avatarDir.getPath() + File.separator + avatarDir.list()[0]);
+      byte[] imageData = inputStream.readAllBytes();
+      inputStream.close();
+      // String base64Image = Base64.getEncoder().encodeToString(imageData);
+      return imageData;
     }
   }
 
@@ -115,7 +121,7 @@ public class FileServices {
     deleteDir(userDir);
   }
 
-  private static void deleteDir(File directory) {
+  public void deleteDir(File directory) {
     if (directory.isDirectory()) {
       File[] files = directory.listFiles();
       if (files != null && files.length > 0) {
@@ -128,10 +134,18 @@ public class FileServices {
     directory.delete();
   }
 
+  public void deleteDir(long user_id, String folder) {
+    File userAvatarDir = new File("GroupProject" + File.separator + user_id + File.separator + folder);
+    File[] allFiles = userAvatarDir.listFiles();
+    for (File file : allFiles) {
+      deleteDir(file);
+    }
+  }
+
   @Data
   @AllArgsConstructor
   private static class Item {
-    private final String name;
+    private final String key;
     private final long size;
     private final String charset;
     private final String filename;
