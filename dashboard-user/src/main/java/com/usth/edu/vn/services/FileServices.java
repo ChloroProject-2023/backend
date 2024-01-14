@@ -55,7 +55,6 @@ public class FileServices {
     Path writeDir = Paths
         .get("GroupProject" + File.separator + user_id + File.separator + folder + File.separator + input.fileName());
     Files.write(writeDir, data);
-    System.out.println(writeDir.toAbsolutePath().toString());
     return writeDir.toAbsolutePath().toString();
   }
 
