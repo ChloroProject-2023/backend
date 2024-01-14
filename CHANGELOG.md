@@ -69,3 +69,8 @@
 
 - **File service:**
   - **service & endpoint:** initialize upload file feature (still testing and optimizing)
+
+## Sun, 14, Jan/2024
+
+- **User service:**
+  - **service & endpoint:** optimize file service for upload model, resource, avatar. Initialize train - evaluate machine learning service (test).
