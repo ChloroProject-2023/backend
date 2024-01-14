@@ -1,20 +1,8 @@
 package com.usth.edu.vn.services;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 import org.jboss.resteasy.reactive.server.multipart.FormValue;
@@ -79,7 +67,6 @@ public class FileServices {
       FileInputStream inputStream = new FileInputStream(avatarDir.getPath() + File.separator + avatarDir.list()[0]);
       byte[] imageData = inputStream.readAllBytes();
       inputStream.close();
-      // String base64Image = Base64.getEncoder().encodeToString(imageData);
       return imageData;
     }
   }

@@ -2,9 +2,7 @@ package com.usth.edu.vn.resource;
 
 import static com.usth.edu.vn.services.FileName.*;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 
 import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.multipart.FileUpload;

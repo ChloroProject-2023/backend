@@ -3,7 +3,6 @@ package com.usth.edu.vn.resource;
 import com.usth.edu.vn.exception.CustomException;
 import com.usth.edu.vn.model.Users;
 import com.usth.edu.vn.model.dto.UserDto;
-import com.usth.edu.vn.repository.ResourceRepository;
 import com.usth.edu.vn.repository.UserRepository;
 import com.usth.edu.vn.services.FileServices;
 
