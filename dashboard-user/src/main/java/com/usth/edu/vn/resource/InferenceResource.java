@@ -1,12 +1,16 @@
 package com.usth.edu.vn.resource;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
+import com.usth.edu.vn.exception.CustomException;
 import com.usth.edu.vn.model.Inferences;
 import com.usth.edu.vn.model.dto.InferenceDto;
 import com.usth.edu.vn.repository.InferenceRepository;
+import com.usth.edu.vn.services.InferenceService;
 
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -23,6 +27,9 @@ public class InferenceResource {
 
   @Inject
   InferenceRepository inferenceRepository;
+
+  @Inject
+  InferenceService inferenceService;
 
   @GET
   @RolesAllowed({ "admin", "user" })
@@ -74,6 +81,13 @@ public class InferenceResource {
       Inferences inference) {
     inferenceRepository.addInference(user_id, model_id, resource_id, inference);
     return Response.created(URI.create("/create-inference/" + inference.getId())).build();
+  }
+
+  @GET
+  @Path("/model-train-eval")
+  @PermitAll
+  public Response getResultTrainEval(@QueryParam("pca_dim") int pca_dim) throws IOException, CustomException {
+    return Response.ok(inferenceService.resultTrainEval(pca_dim)).build();
   }
 
   @DELETE
