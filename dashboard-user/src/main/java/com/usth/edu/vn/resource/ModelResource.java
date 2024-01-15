@@ -158,11 +158,11 @@ public class ModelResource {
 
   @DELETE
   @Path("/delete/{id}")
-  @RolesAllowed({ "admin", "user" })
+  @PermitAll
   @Transactional
   public Response deleteModel(long id) {
     fileServices.deleteDir(new File(modelRepository.getModelById(id).getFilepath()));
     modelRepository.deleteModel(id);
-    return Response.ok("Model" + id + " is deleted!").build();
+    return Response.ok("Model " + id + " is deleted!").build();
   }
 }

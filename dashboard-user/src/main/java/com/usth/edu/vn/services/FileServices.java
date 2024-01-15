@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
+import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 import org.jboss.resteasy.reactive.server.multipart.FormValue;
 import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
@@ -18,6 +19,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import static com.usth.edu.vn.services.FileName.*;
 
@@ -56,6 +58,16 @@ public class FileServices {
         .get("GroupProject" + File.separator + user_id + File.separator + folder + File.separator + input.fileName());
     Files.write(writeDir, data);
     return writeDir.toAbsolutePath().toString();
+  }
+
+  public File getModel(long user_id) throws IOException, CustomException {
+    File modelDir = new File("GroupProject" + File.separator + user_id + File.separator + MODELS);
+    if (modelDir.listFiles().length == 0) {
+      throw new CustomException("No model uploaded!");
+    } else {
+      File modelFile = new File(modelDir.getAbsoluteFile() + File.separator + modelDir.list()[0]);
+      return modelFile;
+    }
   }
 
   public byte[] getAvatar(long user_id) throws IOException, CustomException {
@@ -126,6 +138,16 @@ public class FileServices {
     for (File file : allFiles) {
       deleteDir(file);
     }
+  }
+
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  private static class Model {
+    @RestForm
+    private String name;
+    @RestForm
+    private File file;
   }
 
   @Data
