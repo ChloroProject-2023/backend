@@ -95,11 +95,6 @@ public class ResourceRepository implements PanacheRepository<Resources> {
   }
 
   public void updateResource(long id, Resources resource) throws CustomException {
-    // findByIdOptional(id).map(r -> {
-    //   r.setFilepath(resource.getFilepath());
-    //   r.setType(resource.getType());
-    //   return r;
-    // });
     Optional<Resources> existedResource = findByIdOptional(id);
     if (existedResource.isEmpty()) {
       throw new CustomException("Resource does not existed!");
