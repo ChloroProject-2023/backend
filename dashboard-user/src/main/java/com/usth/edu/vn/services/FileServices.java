@@ -11,6 +11,7 @@ import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 import com.usth.edu.vn.exception.CustomException;
 import com.usth.edu.vn.model.Resources;
 import com.usth.edu.vn.model.Users;
+import com.usth.edu.vn.repository.ModelRepository;
 import com.usth.edu.vn.repository.ResourceRepository;
 import com.usth.edu.vn.repository.UserRepository;
 
@@ -26,6 +27,9 @@ public class FileServices {
 
   @Inject
   UserRepository userRepository;
+
+  @Inject
+  ModelRepository modelRepository;
 
   @Inject
   ResourceRepository resourceRepository;
@@ -49,14 +53,36 @@ public class FileServices {
     return items;
   }
 
-  public String uploadFile(long user_id, FileUpload input, String folder) throws IOException {
+  public String uploadFile(long user_id, FileUpload input, String folder) throws IOException, CustomException {
     Path file = input.uploadedFile();
     byte[] data = Files.readAllBytes(file);
     Path writeDir = Paths
         .get("GroupProject" + File.separator + user_id + File.separator + folder + File.separator + input.fileName());
-    Files.write(writeDir, data);
-    System.out.println(writeDir.toAbsolutePath().toString());
-    return writeDir.toAbsolutePath().toString();
+    writeDir.getParent().toFile().mkdirs();
+    if (Files.notExists(writeDir)) {
+      Files.write(writeDir, data);
+      return writeDir.toAbsolutePath().toString();
+    } else {
+      throw new CustomException("File already existed!");
+    }
+  }
+
+  public File getFile(long user_id, long file_id, String resourceType) throws IOException, CustomException {
+    if (resourceType == MODELS && modelRepository.findByIdOptional(file_id).isPresent()) {
+      File modelFile = new File(modelRepository.findModelById(file_id).getFilepath());
+      if (modelFile.isFile()) {
+        return modelFile;
+      }
+      throw new CustomException("You have not uploaded model script!");
+    } else if (resourceType == RESOURCES && resourceRepository.findByIdOptional(file_id).isPresent()) {
+      File resourceFile = new File(resourceRepository.findResourceById(file_id).getFilepath());
+      if (resourceFile.isFile()) {
+        return resourceFile;
+      }
+      throw new CustomException("Resource file has not been uploaded!");
+    } else {
+      throw new CustomException("File does not exist!");
+    }
   }
 
   public byte[] getAvatar(long user_id) throws IOException, CustomException {
@@ -85,10 +111,6 @@ public class FileServices {
     File userModelDir = new File("GroupProject" + File.separator + user_id + File.separator + MODELS);
     File userResourceDir = new File("GroupProject" + File.separator + user_id + File.separator + RESOURCES);
     File userAvatarDir = new File("GroupProject" + File.separator + user_id + File.separator + AVATARS);
-    Resources resource = new Resources();
-    resource.setType("Directories");
-    resource.setFilepath("GroupProject" + File.separator + user_id + File.separator + AVATARS);
-    resourceRepository.addResource(user_id, resource);
     userModelDir.mkdirs();
     userResourceDir.mkdirs();
     userAvatarDir.mkdirs();

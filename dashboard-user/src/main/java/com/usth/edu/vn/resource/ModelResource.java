@@ -132,18 +132,17 @@ public class ModelResource {
       @QueryParam("type") String type,
       @QueryParam("description") String description,
       @RestForm("model") FileUpload input)
-      throws IOException {
+      throws IOException, CustomException {
     Models model = new Models();
     model.setName(name);
     model.setType(type);
     model.setDescription(description);
-    model.setFilepath(fileServices.uploadFile(user_id, input, MODELS));
+    model.setFilepath(fileServices.uploadFile(user_id, input, MODELS + File.separatorChar + type));
     modelRepository.addModel(user_id, model);
     if (modelRepository.isPersistent(model)) {
       return Response.created(URI.create("/user/" + user_id + "/new-model/" +
           model.getId())).build();
     }
-    fileServices.uploadFile(user_id, input, MODELS);
     return Response.status(BAD_REQUEST).build();
   }
 
@@ -158,11 +157,13 @@ public class ModelResource {
 
   @DELETE
   @Path("/delete/{id}")
-  @RolesAllowed({ "admin", "user" })
+  // @RolesAllowed({ "admin", "user" })
+  @PermitAll
   @Transactional
+  @Produces(MediaType.TEXT_PLAIN)
   public Response deleteModel(long id) {
     fileServices.deleteDir(new File(modelRepository.getModelById(id).getFilepath()));
     modelRepository.deleteModel(id);
-    return Response.ok("Model" + id + " is deleted!").build();
+    return Response.ok("Model " + id + " is deleted!").build();
   }
 }
