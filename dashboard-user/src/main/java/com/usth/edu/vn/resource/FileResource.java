@@ -4,6 +4,7 @@ import static com.usth.edu.vn.services.FileName.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.File;
 
 import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
@@ -34,7 +35,7 @@ public class FileResource {
   @Path("/upload-avatar")
   @PermitAll
   public Response uploadAvatar(@QueryParam("user_id") long user_id, @RestForm("image") FileUpload input)
-      throws IOException {
+      throws IOException, CustomException {
     fileServices.deleteDir(user_id, AVATARS);
     return Response.ok(fileServices.uploadFile(user_id, input, AVATARS)).build();
   }
@@ -62,13 +63,28 @@ public class FileResource {
   }
 
   @GET
-  @Path("/get-file")
+  @Path("/get-model")
   @PermitAll
   @Produces(MediaType.APPLICATION_OCTET_STREAM)
-  public Response getModel(@QueryParam("id") long user_id) throws IOException, CustomException {
-    File modelFile = fileServices.getModel(user_id);
+  public Response getModelFile(
+      @QueryParam("user_id") long user_id,
+      @QueryParam("model_id") long model_id) throws IOException, CustomException {
+    File modelFile = fileServices.getFile(user_id, model_id, MODELS);
     ResponseBuilder response = Response.ok(modelFile);
-    response.header("Content-Disposition", String.format("attachment; filename=\"%s\"", modelFile.getName()));
+    response.header("Content-Disposition", String.format("attachment; filename=%s", modelFile.getName()));
+    return response.build();
+  }
+
+  @GET
+  @Path("/get-resource")
+  @PermitAll
+  @Produces(MediaType.APPLICATION_OCTET_STREAM)
+  public Response getResourceFile(
+      @QueryParam("user_id") long user_id,
+      @QueryParam("resource_id") long resource_id) throws IOException, CustomException {
+    File modelFile = fileServices.getFile(user_id, resource_id, RESOURCES);
+    ResponseBuilder response = Response.ok(modelFile);
+    response.header("Content-Disposition", String.format("attachment; filename=%s", modelFile.getName()));
     return response.build();
   }
 

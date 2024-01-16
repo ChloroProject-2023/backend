@@ -42,6 +42,7 @@ public class Resource {
   public Response getAllResources() {
     List<ResourceDto> allResources = resourceRepository.findAllResources();
     return Response.ok(allResources).build();
+
   }
 
   @GET
@@ -74,13 +75,12 @@ public class Resource {
   @Transactional
   @Consumes(MediaType.MULTIPART_FORM_DATA)
   public Response createResource(
-    @QueryParam("user_id") long user_id,
-    @QueryParam("type") String type,
-    @RestForm("resource") FileUpload input
-    ) throws IOException {
+      @QueryParam("user_id") long user_id,
+      @QueryParam("type") String type,
+      @RestForm("resource") FileUpload input) throws IOException, CustomException {
     Resources resource = new Resources();
     resource.setType(type);
-    resource.setFilepath(fileServices.uploadFile(user_id, input, RESOURCES));
+    resource.setFilepath(fileServices.uploadFile(user_id, input, RESOURCES + File.separator + type));
     resourceRepository.addResource(user_id, resource);
     if (resourceRepository.isPersistent(resource)) {
       return Response.created(URI.create("/user/" + user_id + "/new-resource/" + resource.getId())).build();
