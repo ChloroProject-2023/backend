@@ -74,3 +74,18 @@
 
 - **User service:**
   - **service & endpoint:** optimize file service for upload model, resource, avatar. Initialize train - evaluate machine learning service (test).
+
+## Tue, 16, Jan/2024
+
+- **User service:**
+  - **entities:** optimize entities' relationship, fix description and comment - change to text type (before varchar 255), fix
+    stack overflow error when using @Data from lombok.
+  - **file service:** optimize upload and download file service.
+  - **service & endpoint:** optimize all CRUD services with exception handler.
+
+## Fri, 19, Jan/2024
+
+### Feature
+
+- **user service:**
+  - **inference service:** initialize training and running inference service from machine learning API.
