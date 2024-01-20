@@ -11,6 +11,7 @@ import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -27,6 +28,7 @@ public class Ratings {
 
   private Integer stars;
 
+  @Column(columnDefinition = "TEXT")
   private String comment;
 
   @Temporal(TIMESTAMP)
@@ -34,9 +36,11 @@ public class Ratings {
 
   @ManyToOne
   @JoinColumn(name = "user_id", referencedColumnName = "id")
+  @EqualsAndHashCode.Exclude
   private Users user;
 
   @ManyToOne
   @JoinColumn(name = "model_id", referencedColumnName = "id")
+  @EqualsAndHashCode.Exclude
   private Models model;
 }

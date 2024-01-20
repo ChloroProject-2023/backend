@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -31,8 +32,10 @@ public class Resources {
 
   @ManyToOne
   @JoinColumn(name = "user_id", referencedColumnName = "id")
+  @EqualsAndHashCode.Exclude
   private Users user;
 
   @OneToMany(mappedBy = "resource", cascade = CascadeType.PERSIST, orphanRemoval = true)
+  @EqualsAndHashCode.Exclude
   private Set<Inferences> inference;
 }

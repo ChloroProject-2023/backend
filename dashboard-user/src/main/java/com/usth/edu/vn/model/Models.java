@@ -13,6 +13,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -34,6 +35,7 @@ public class Models {
 
   private String filepath;
 
+  @Column(columnDefinition = "TEXT")
   private String description;
 
   @Temporal(TIMESTAMP)
@@ -41,11 +43,14 @@ public class Models {
 
   @ManyToOne
   @JoinColumn(name = "user_id", referencedColumnName = "id")
+  @EqualsAndHashCode.Exclude
   private Users user;
 
   @OneToMany(mappedBy = "model", cascade = CascadeType.PERSIST)
+  @EqualsAndHashCode.Exclude
   private Set<Inferences> inference;
 
   @OneToMany(mappedBy = "model", cascade = CascadeType.ALL, orphanRemoval = true)
+  @EqualsAndHashCode.Exclude
   private Set<Ratings> ratings;
 }
