@@ -4,13 +4,13 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 import org.jboss.resteasy.reactive.server.multipart.FormValue;
 import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 
 import com.usth.edu.vn.exception.CustomException;
-import com.usth.edu.vn.model.Resources;
 import com.usth.edu.vn.model.Users;
 import com.usth.edu.vn.repository.ModelRepository;
 import com.usth.edu.vn.repository.ResourceRepository;
@@ -26,6 +26,9 @@ import static com.usth.edu.vn.services.FileName.*;
 
 @Singleton
 public class FileServices {
+
+  @ConfigProperty(name = "system.folder", defaultValue = "GroupProject")
+  String defaultFolder;
 
   @Inject
   UserRepository userRepository;
@@ -59,7 +62,7 @@ public class FileServices {
     Path file = input.uploadedFile();
     byte[] data = Files.readAllBytes(file);
     Path writeDir = Paths
-        .get("GroupProject" + File.separator + user_id + File.separator + folder + File.separator + input.fileName());
+        .get(defaultFolder + File.separator + user_id + File.separator + folder + File.separator + input.fileName());
     writeDir.getParent().toFile().mkdirs();
     if (Files.notExists(writeDir)) {
       Files.write(writeDir, data);
@@ -87,19 +90,9 @@ public class FileServices {
     }
   }
 
-  public File getModel(long user_id) throws IOException, CustomException {
-    File modelDir = new File("GroupProject" + File.separator + user_id + File.separator + MODELS);
-    if (modelDir.listFiles().length == 0) {
-      throw new CustomException("No model uploaded!");
-    } else {
-      File modelFile = new File(modelDir.getAbsoluteFile() + File.separator + modelDir.list()[0]);
-      return modelFile;
-    }
-  }
-
-  public byte[] getAvatar(long user_id) throws IOException, CustomException {
-    File avatarDir = new File("GroupProject" + File.separator + user_id + File.separator + AVATARS);
-    if (avatarDir.listFiles().length == 0) {
+  public byte[] getAvatar(long user) throws IOException, CustomException {
+    File avatarDir = new File(defaultFolder + File.separator + user + File.separator + AVATARS);
+    if (avatarDir.listFiles() == null) {
       throw new CustomException("No avatar uploaded!");
     } else {
       FileInputStream inputStream = new FileInputStream(avatarDir.getPath() + File.separator + avatarDir.list()[0]);
@@ -113,16 +106,16 @@ public class FileServices {
       throws IOException {
     byte[] data = inputStream.readAllBytes();
     File writeDir = new File(
-        "GroupProject" + File.separator + user_id + File.separator + folder + File.separator + filename);
+        defaultFolder + File.separator + user_id + File.separator + folder + File.separator + filename);
     OutputStream outputStream = new FileOutputStream(writeDir);
     outputStream.write(data);
     outputStream.close();
   }
 
   public void createUserDir(long user_id) {
-    File userModelDir = new File("GroupProject" + File.separator + user_id + File.separator + MODELS);
-    File userResourceDir = new File("GroupProject" + File.separator + user_id + File.separator + RESOURCES);
-    File userAvatarDir = new File("GroupProject" + File.separator + user_id + File.separator + AVATARS);
+    File userModelDir = new File(defaultFolder + File.separator + user_id + File.separator + MODELS);
+    File userResourceDir = new File(defaultFolder + File.separator + user_id + File.separator + RESOURCES);
+    File userAvatarDir = new File(defaultFolder + File.separator + user_id + File.separator + AVATARS);
     userModelDir.mkdirs();
     userResourceDir.mkdirs();
     userAvatarDir.mkdirs();
@@ -132,13 +125,13 @@ public class FileServices {
     Optional<Users> existedUser = userRepository.findByUsername(username);
     if (existedUser.isPresent()) {
       long user_id = existedUser.get().getId();
-      File userDir = new File("GroupProject" + File.separator + user_id);
+      File userDir = new File(defaultFolder + File.separator + user_id);
       deleteDir(userDir);
     }
   }
 
   public void deleteUserDir(long user_id) {
-    File userDir = new File("GroupProject" + File.separator + user_id);
+    File userDir = new File(defaultFolder + File.separator + user_id);
     deleteDir(userDir);
   }
 
@@ -156,7 +149,7 @@ public class FileServices {
   }
 
   public void deleteDir(long user_id, String folder) {
-    File userAvatarDir = new File("GroupProject" + File.separator + user_id + File.separator + folder);
+    File userAvatarDir = new File(defaultFolder + File.separator + user_id + File.separator + folder);
     File[] allFiles = userAvatarDir.listFiles();
     for (File file : allFiles) {
       deleteDir(file);
