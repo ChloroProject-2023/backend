@@ -1,5 +1,7 @@
 package com.usth.edu.vn.repository;
 
+import static com.usth.edu.vn.exception.ExceptionType.USER_NOT_FOUND;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -130,10 +132,6 @@ public class RatingRepository implements PanacheRepository<Ratings> {
   }
 
   public void addRating(long user_id, long model_id, Ratings rating) throws CustomException {
-    // Optional<Ratings> existedRating = streamAll()
-    // .filter(r ->
-    // r.getUser().getId().equals(user_id) &&
-    // r.getModel().getId().equals(model_id)).findAny();
     Optional<Ratings> existedRating = entityManager.createQuery("""
         SELECT r
         FROM Ratings r
@@ -148,9 +146,14 @@ public class RatingRepository implements PanacheRepository<Ratings> {
       throw new CustomException("Already rated this model!");
     } else {
       Users user = userRepository.findById(user_id);
-      Models models = modelRepository.findById(model_id);
+      Models model = modelRepository.findById(model_id);
+      if (user == null) {
+        throw new CustomException(USER_NOT_FOUND);
+      } else if (model == null) {
+        throw new CustomException("Model not found!");
+      }
       rating.setUser(user);
-      rating.setModel(models);
+      rating.setModel(model);
       rating.setCreateTime(new Date());
       persist(rating);
     }

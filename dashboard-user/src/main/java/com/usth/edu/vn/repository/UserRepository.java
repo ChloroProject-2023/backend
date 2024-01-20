@@ -82,7 +82,7 @@ public class UserRepository implements PanacheRepository<Users> {
             """, UserDto.class)
         .setParameter("username", username)
         .getResultStream()
-        .findFirst();
+        .findAny();
   }
 
   public List<UserDto> findAllUsers() {
