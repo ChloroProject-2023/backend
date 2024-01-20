@@ -1,14 +1,22 @@
 package com.usth.edu.vn.repository;
 
+import static com.usth.edu.vn.exception.ExceptionType.USER_NOT_FOUND;
+import static com.usth.edu.vn.services.FileName.MODELS;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.jboss.resteasy.reactive.multipart.FileUpload;
+
 import com.usth.edu.vn.exception.CustomException;
 import com.usth.edu.vn.model.Models;
 import com.usth.edu.vn.model.Users;
 import com.usth.edu.vn.model.dto.ModelDto;
+import com.usth.edu.vn.services.FileServices;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -21,6 +29,9 @@ public class ModelRepository implements PanacheRepository<Models> {
 
   @Inject
   UserRepository userRepository;
+
+  @Inject
+  FileServices fileServices;
 
   @Inject
   EntityManager entityManager;
@@ -328,9 +339,13 @@ public class ModelRepository implements PanacheRepository<Models> {
         .getResultList();
   }
 
-  public void addModel(long user_id, Models model) {
-    Users user = userRepository.findById(user_id);
-    model.setUser(user);
+  public void addModel(long user_id, Models model, FileUpload modelFile) throws IOException, CustomException {
+    Optional<Users> existedUser = userRepository.findByIdOptional(user_id);
+    if (existedUser.isEmpty()) {
+      throw new CustomException(USER_NOT_FOUND);
+    }
+    model.setFilepath(fileServices.uploadFile(user_id, modelFile, MODELS + File.separator + model.getType()));
+    model.setUser(existedUser.get());
     model.setCreateTime(new Date());
     persist(model);
   }
