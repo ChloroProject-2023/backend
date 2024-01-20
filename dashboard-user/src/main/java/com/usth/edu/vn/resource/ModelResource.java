@@ -2,7 +2,6 @@ package com.usth.edu.vn.resource;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 
 import org.jboss.resteasy.reactive.RestForm;
@@ -24,7 +23,6 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import static com.usth.edu.vn.services.FileName.MODELS;
 import static jakarta.ws.rs.core.Response.Status.*;
 
 @Path("/models")
@@ -81,7 +79,7 @@ public class ModelResource {
   }
 
   @GET
-  @Path("/models-by-user/{user_id}")
+  @Path("/models-by-user")
   @PermitAll
   public Response getModelsByUser(long user_id) {
     List<ModelDto> allModels = modelRepository.findModelsByUser(user_id);
@@ -137,22 +135,20 @@ public class ModelResource {
     model.setName(name);
     model.setType(type);
     model.setDescription(description);
-    model.setFilepath(fileServices.uploadFile(user_id, input, MODELS + File.separatorChar + type));
-    modelRepository.addModel(user_id, model);
+    modelRepository.addModel(user_id, model, input);
     if (modelRepository.isPersistent(model)) {
-      return Response.created(URI.create("/user/" + user_id + "/new-model/" +
-          model.getId())).build();
+      return Response.status(CREATED).build();
     }
     return Response.status(BAD_REQUEST).build();
   }
 
   @PUT
-  @Path("/update/{model_id}")
+  @Path("/update")
   @RolesAllowed({ "admin", "user" })
   @Transactional
-  public Response updateModel(long model_id, Models model) throws CustomException {
+  public Response updateModel(@QueryParam("id") long model_id, Models model) throws CustomException {
     modelRepository.updateModel(model_id, model);
-    return Response.created(URI.create("/update-model/" + model_id)).entity(model).build();
+    return Response.status(ACCEPTED).entity(model).build();
   }
 
   @DELETE

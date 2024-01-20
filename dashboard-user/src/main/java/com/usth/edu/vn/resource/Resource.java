@@ -2,7 +2,6 @@ package com.usth.edu.vn.resource;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 
 import org.jboss.resteasy.reactive.RestForm;
@@ -14,6 +13,7 @@ import com.usth.edu.vn.model.dto.ResourceDto;
 import com.usth.edu.vn.repository.ResourceRepository;
 import com.usth.edu.vn.services.FileServices;
 
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -22,7 +22,6 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import static com.usth.edu.vn.services.FileName.RESOURCES;
 import static jakarta.ws.rs.core.Response.Status.*;
 
 @Path("/resources")
@@ -54,9 +53,9 @@ public class Resource {
   }
 
   @GET
-  @Path("/user_id/{user_id}")
+  @Path("/user_id")
   @RolesAllowed({ "admin", "user" })
-  public Response getResourceByUserId(long user_id) {
+  public Response getResourceByUserId(@QueryParam("user_id") long user_id) {
     List<ResourceDto> resourceDto = resourceRepository.findResourceByUserId(user_id);
     return Response.ok(resourceDto).build();
   }
@@ -71,7 +70,8 @@ public class Resource {
 
   @POST
   @Path("/create")
-  @RolesAllowed({ "admin", "user" })
+  // @RolesAllowed({ "admin", "user" })
+  @PermitAll
   @Transactional
   @Consumes(MediaType.MULTIPART_FORM_DATA)
   public Response createResource(
@@ -80,10 +80,9 @@ public class Resource {
       @RestForm("resource") FileUpload input) throws IOException, CustomException {
     Resources resource = new Resources();
     resource.setType(type);
-    resource.setFilepath(fileServices.uploadFile(user_id, input, RESOURCES + File.separator + type));
-    resourceRepository.addResource(user_id, resource);
+    resourceRepository.addResource(user_id, resource, input);
     if (resourceRepository.isPersistent(resource)) {
-      return Response.created(URI.create("/user/" + user_id + "/new-resource/" + resource.getId())).build();
+      return Response.status(CREATED).build();
     } else {
       return Response.status(BAD_REQUEST).build();
     }
@@ -95,8 +94,7 @@ public class Resource {
   @Transactional
   public Response updateResource(@QueryParam("id") long id, Resources resource) throws CustomException {
     resourceRepository.updateResource(id, resource);
-    return Response.created(URI.create("/user/" + id + "/resource-update/" + resource.getId())).entity(resource)
-        .build();
+    return Response.status(ACCEPTED).entity(resource).build();
   }
 
   @DELETE

@@ -1,6 +1,7 @@
 package com.usth.edu.vn.resource;
 
-import java.net.URI;
+import static jakarta.ws.rs.core.Response.Status.*;
+
 import java.util.List;
 
 import com.usth.edu.vn.exception.CustomException;
@@ -17,7 +18,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-@Path("/rating")
+@Path("/ratings")
 @ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -43,17 +44,24 @@ public class RatingResource {
   }
 
   @GET
-  @Path("/model_id/{model_id}")
+  @Path("/count")
   @PermitAll
-  public Response getRatingsByModelId(long model_id) {
+  public Response getRatingCount() {
+    return Response.ok(ratingRepository.count()).build();
+  }
+
+  @GET
+  @Path("/model_id")
+  @PermitAll
+  public Response getRatingsByModelId(@QueryParam("model_id") long model_id) {
     List<RatingDto> allRatings = ratingRepository.findRatingByModelId(model_id);
     return Response.ok(allRatings).build();
   }
 
   @GET
-  @Path("/user_id/{user_id}")
+  @Path("/user_id")
   @PermitAll
-  public Response getRatingsByUserId(long user_id) {
+  public Response getRatingsByUserId(@QueryParam("user_id") long user_id) {
     List<RatingDto> allRatings = ratingRepository.findRatingByUserId(user_id);
     return Response.ok(allRatings).build();
   }
@@ -67,7 +75,7 @@ public class RatingResource {
       @QueryParam("model_id") long model_id,
       Ratings rating) throws CustomException {
     ratingRepository.addRating(user_id, model_id, rating);
-    return Response.created(URI.create("/user/" + user_id + "/model/" + model_id + "/new-rating/" + rating.getId()))
+    return Response.status(CREATED).entity("User " + user_id + " rated model " + model_id + " rating " + rating.getId())
         .build();
   }
 
@@ -80,9 +88,8 @@ public class RatingResource {
       @QueryParam("model_id") long model_id,
       Ratings rating) throws CustomException {
     ratingRepository.updateRating(user_id, model_id, rating);
-    return Response.created(URI.create("/user/" + user_id + "/model/" + model_id + "/rating-update/" + rating.getId()))
-        .entity(rating)
-        .build();
+    return Response.status(ACCEPTED)
+        .entity("User " + user_id + " updated rating " + rating.getId() + " of model " + model_id).build();
   }
 
   @DELETE

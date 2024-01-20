@@ -22,7 +22,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 
-@Path("/file")
+@Path("/files")
 @ApplicationScoped
 @Consumes(MediaType.MULTIPART_FORM_DATA)
 @Produces(MediaType.APPLICATION_JSON)
@@ -50,7 +50,7 @@ public class FileResource {
   @POST
   @Path("/upload-resource")
   @PermitAll
-  public Response uploadResource(@QueryParam("user_rd") long user_id, MultipartFormDataInput input) throws IOException {
+  public Response uploadResource(@QueryParam("user_id") long user_id, MultipartFormDataInput input) throws IOException {
     return Response.ok(fileServices.uploadFile(user_id, input, RESOURCES)).build();
   }
 

@@ -3,7 +3,6 @@ package com.usth.edu.vn.resource;
 import com.usth.edu.vn.exception.CustomException;
 import com.usth.edu.vn.model.Users;
 import com.usth.edu.vn.model.dto.UserDto;
-import com.usth.edu.vn.repository.ResourceRepository;
 import com.usth.edu.vn.repository.UserRepository;
 import com.usth.edu.vn.services.FileServices;
 
@@ -16,7 +15,6 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,9 +101,9 @@ public class UserResource {
     userRepository.addUser(user);
     if (userRepository.isPersistent(user)) {
       fileServices.createUserDir(user.getId());
-      return Response.created(URI.create("/new-user/" + user.getId())).entity(user).build();
+      return Response.status(CREATED).entity(user).build();
     }
-    return Response.status(BAD_REQUEST).build();
+    return Response.status(BAD_REQUEST).entity(user).build();
   }
 
   @PUT
@@ -114,17 +112,17 @@ public class UserResource {
   @RolesAllowed({ "admin", "user" })
   public Response updateUser(@QueryParam("id") long id, Users user) throws CustomException {
     userRepository.updateUser(id, user);
-    return Response.created(URI.create("/update-user/" + id)).entity(user).build();
+    return Response.status(ACCEPTED).entity(user).build();
   }
 
   @PUT
-  @Path("/updatePassword")
+  @Path("/update-password")
   @Transactional
   @RolesAllowed({ "admin", "user" })
   public Response updatePassword(@QueryParam("id") long id, @QueryParam("oldPassword") String oldPassword,
       @QueryParam("newPassword") String newPassword) throws CustomException {
     userRepository.updatePassword(id, oldPassword, newPassword);
-    return Response.created(URI.create("/update-password-user/" + id)).build();
+    return Response.status(ACCEPTED).build();
   }
 
   @DELETE
@@ -144,6 +142,6 @@ public class UserResource {
   public Response deleteUser(@PathParam("id") long id) throws CustomException {
     fileServices.deleteUserDir(id);
     userRepository.deleteUser(id);
-    return Response.ok("User " + id + " is deleted!").build();
+    return Response.ok("User id:" + id + " is deleted!").build();
   }
 }
