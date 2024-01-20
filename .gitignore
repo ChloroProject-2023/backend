@@ -35,8 +35,14 @@ google-services.json
 target/
 jwt
 
-# nvim jdtls
+# Visual Studio Code
+.vscode
+
+# Eclipse
 .classpath
 .factorypath
 .project
 .settings/
+
+# Other services
+GroupProject/

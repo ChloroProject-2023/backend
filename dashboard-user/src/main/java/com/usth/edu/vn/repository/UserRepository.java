@@ -5,7 +5,6 @@ import com.usth.edu.vn.model.UserDetails;
 import com.usth.edu.vn.model.Users;
 import com.usth.edu.vn.model.dto.UserDto;
 
-import io.quarkus.agroal.DataSource;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -33,7 +32,7 @@ public class UserRepository implements PanacheRepository<Users> {
 
   public Users getUserById(long id) {
     Users user = findById(id);
-      return Users
+    return Users
         .builder()
         .username(user.getUsername())
         .userDetail(userDetailsRepository.getUserDetail(id))
@@ -83,7 +82,7 @@ public class UserRepository implements PanacheRepository<Users> {
             """, UserDto.class)
         .setParameter("username", username)
         .getResultStream()
-        .findFirst();
+        .findAny();
   }
 
   public List<UserDto> findAllUsers() {
@@ -107,7 +106,7 @@ public class UserRepository implements PanacheRepository<Users> {
         .getResultList();
   }
 
-  public List<UserDto> findPagingUsers(int pageNo) {
+  public List<UserDto> findPagingUsers(int pageNo, int pageSize) {
     return entityManager
         .createQuery("""
             SELECT NEW com.usth.edu.vn.model.dto.UserDto(
@@ -125,8 +124,8 @@ public class UserRepository implements PanacheRepository<Users> {
             ON u.id = ud.user.id
             """,
             UserDto.class)
-        .setFirstResult((pageNo - 1) * PAGE_SIZE)
-        .setMaxResults(PAGE_SIZE)
+        .setFirstResult((pageNo - 1) * pageSize)
+        .setMaxResults(pageSize)
         .getResultList();
   }
 
@@ -178,13 +177,29 @@ public class UserRepository implements PanacheRepository<Users> {
   }
 
   public void updateUser(long id, Users user) throws CustomException {
-    findByIdOptional(id).map(u -> {
-      u.setRoles(user.getRoles());
-      u.getUserDetail().setFirstname(user.getUserDetail().getFirstname());
-      u.getUserDetail().setLastname(user.getUserDetail().getLastname());
-      u.getUserDetail().setEmail(user.getUserDetail().getEmail());
-      return u;
-    }).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+    Optional<Users> existedUser = findByIdOptional(id);
+    if (existedUser.isEmpty()) {
+      throw new CustomException(USER_NOT_FOUND);
+    } else {
+      Users saveUser = existedUser.get();
+      if (user.getRoles() != null) {
+        saveUser.setRoles(user.getRoles());
+      }
+      if (user.getUserDetail() != null) {
+        String firstname = user.getUserDetail().getFirstname();
+        if (firstname != null) {
+          saveUser.getUserDetail().setFirstname(firstname);
+        }
+        String lastname = user.getUserDetail().getLastname();
+        if (lastname != null) {
+          saveUser.getUserDetail().setLastname(lastname);
+        }
+        String email = user.getUserDetail().getEmail();
+        if (email != null) {
+          saveUser.getUserDetail().setEmail(email);
+        }
+      }
+    }
   }
 
   public void updatePassword(long id, String oldPassword, String newPassword) throws CustomException {

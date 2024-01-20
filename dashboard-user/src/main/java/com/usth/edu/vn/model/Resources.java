@@ -1,6 +1,7 @@
 package com.usth.edu.vn.model;
 
 import java.util.Date;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -22,7 +24,7 @@ public class Resources {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  private String filePath;
+  private String filepath;
 
   private String type;
 
@@ -30,7 +32,10 @@ public class Resources {
 
   @ManyToOne
   @JoinColumn(name = "user_id", referencedColumnName = "id")
+  @EqualsAndHashCode.Exclude
   private Users user;
 
-  private Inferences inference;
+  @OneToMany(mappedBy = "resource", cascade = CascadeType.PERSIST, orphanRemoval = true)
+  @EqualsAndHashCode.Exclude
+  private Set<Inferences> inference;
 }

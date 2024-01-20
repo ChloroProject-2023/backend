@@ -4,9 +4,11 @@ import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class ModelDto {
 
   private Long id;
@@ -19,7 +21,13 @@ public class ModelDto {
 
   private String description;
 
-  private long user_id;
+  private Double stars;
+
+  private Long usageCount;
+
+  private Long user_id;
+
+  private String username;
 
   private String firstname;
 

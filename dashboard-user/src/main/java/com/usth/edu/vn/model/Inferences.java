@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -34,13 +35,16 @@ public class Inferences {
 
   @ManyToOne
   @JoinColumn(name = "user_id", referencedColumnName = "id")
+  @EqualsAndHashCode.Exclude
   private Users user;
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "model_id", referencedColumnName = "id")
+  @EqualsAndHashCode.Exclude
   private Models model;
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "resource_id", referencedColumnName = "id")
+  @EqualsAndHashCode.Exclude
   private Resources resource;
 }

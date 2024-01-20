@@ -43,5 +43,9 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-elytron-security-jdbc</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-container-image-docker</artifactId>
+    </dependency>
   </dependencies>
 </project>
