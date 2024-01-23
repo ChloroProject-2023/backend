@@ -81,7 +81,7 @@ public class ModelResource {
   @GET
   @Path("/models-by-user")
   @PermitAll
-  public Response getModelsByUser(long user_id) {
+  public Response getModelsByUser(@QueryParam("user_id") long user_id) {
     List<ModelDto> allModels = modelRepository.findModelsByUser(user_id);
     return Response.ok(allModels).build();
   }
