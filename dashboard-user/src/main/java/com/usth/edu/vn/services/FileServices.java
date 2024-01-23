@@ -3,6 +3,7 @@ package com.usth.edu.vn.services;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.stream.Stream;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.resteasy.reactive.RestForm;
@@ -92,7 +93,7 @@ public class FileServices {
 
   public byte[] getAvatar(long user) throws IOException, CustomException {
     File avatarDir = new File(defaultFolder + File.separator + user + File.separator + AVATARS);
-    if (avatarDir.listFiles() == null) {
+    if (isDirEmpty(avatarDir.toPath())) {
       throw new CustomException("No avatar uploaded!");
     } else {
       FileInputStream inputStream = new FileInputStream(avatarDir.getPath() + File.separator + avatarDir.list()[0]);
@@ -100,6 +101,15 @@ public class FileServices {
       inputStream.close();
       return imageData;
     }
+  }
+
+  private boolean isDirEmpty(Path path) throws IOException {
+    if (Files.isDirectory(path)) {
+      try (Stream<Path> entries = Files.list(path)) {
+        return !entries.findFirst().isPresent();
+      }
+    }
+    return false;
   }
 
   private void writeFile(long user_id, InputStream inputStream, String folder, String filename)
