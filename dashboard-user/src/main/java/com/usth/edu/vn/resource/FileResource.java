@@ -4,7 +4,6 @@ import static com.usth.edu.vn.services.FileName.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.File;
 
 import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
@@ -14,7 +13,6 @@ import com.usth.edu.vn.exception.CustomException;
 import com.usth.edu.vn.services.FileServices;
 
 import jakarta.annotation.security.PermitAll;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -82,9 +80,9 @@ public class FileResource {
   public Response getResourceFile(
       @QueryParam("user_id") long user_id,
       @QueryParam("resource_id") long resource_id) throws IOException, CustomException {
-    File modelFile = fileServices.getFile(user_id, resource_id, RESOURCES);
-    ResponseBuilder response = Response.ok(modelFile);
-    response.header("Content-Disposition", String.format("attachment; filename=%s", modelFile.getName()));
+    File resourceFile = fileServices.getFile(user_id, resource_id, RESOURCES);
+    ResponseBuilder response = Response.ok(resourceFile);
+    response.header("Content-Disposition", String.format("attachment; filename=%s", resourceFile.getName()));
     return response.build();
   }
 
